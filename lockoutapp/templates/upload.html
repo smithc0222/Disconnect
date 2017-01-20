@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
@@ -7,13 +8,13 @@
 <br>
 <div class="row">
 <div class="col-xs-6 form-group">
-LOTO Number: {{ lockout.id }}
+LOTO Number:
 </div>
 <div class="col-xs-6 form-group">
-Lockout Developed By: {{ lockout.lockout_author }}
+Lockout Developed By:
 </div>
 <div class="col-xs-6 form-group">
-Date: {{ lockout.date }}
+Date:
 </div>
 <div class="col-xs-6 form-group">
 Workorder Number: TBD
@@ -21,13 +22,13 @@ Workorder Number: TBD
 </div>
 <br>
 <div class="col-xs-12 form-group">
-Work Description: {{ lockout.description }}
+Work Description:
 </div>
 <br>
 <h4> PPE Required: </h4>
 
 <div class="col-xs-6 form-group">
-<input type="checkbox" name="goggles" value="{{ request.form.goggles }}"  checked> Goggles<br>
+<input type="checkbox" name="goggles" value="hello"  checked> Goggles<br>
 <input type="checkbox" name="faceshield" value="faceshield"> Face Shield<br>
 <input type="checkbox" name="fullfacerespirator" value="fullfacerespirator"> Full Face Respirator<br>
 <input type="checkbox" name="dustmask" value="dustmask" checked> Dust Mask<br>
@@ -93,6 +94,14 @@ Lockout Authorized for Implementation by:
 </tbody>
 </table>
 <hr>
+<form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
+  <div class="form-group">
+    <label class="control-label">Attach File</label>
+    <input id="attach" type="file" class="file" name="inputFile">
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
 </div>
 
 

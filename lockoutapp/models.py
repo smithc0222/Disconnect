@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime, date
+
 class User(db.Model):
 
     __tablename__="user"
@@ -19,6 +20,7 @@ class User(db.Model):
     def __repr__(self):
         return '{}'.format(self.username)
 
+
 class Lockout(db.Model):
 
     __tablename__="lockout"
@@ -26,6 +28,8 @@ class Lockout(db.Model):
     description=db.Column(db.String(200), nullable=False)
     lockout_author = db.relationship('User', backref=db.backref('lockout_author', lazy='dynamic'))
     user_id=db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    filename=db.Column(db.String(300), nullable=True)
+    data=db.column(db.LargeBinary)
     #associated_workorder_number= db.relationship('Workorder', backref=db.backref('associated_workorder_number', lazy='dynamic'))
     #workorder_id=db.Column('workorder_id', db.Integer, db.ForeignKey('workorder.id'))
     date=db.Column(db.DateTime)
