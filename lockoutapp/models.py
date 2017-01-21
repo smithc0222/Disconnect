@@ -34,9 +34,7 @@ class Lockout(db.Model):
     #workorder_id=db.Column('workorder_id', db.Integer, db.ForeignKey('workorder.id'))
     date=db.Column(db.DateTime)
     #ppe=db.Column(db.String(50), nullable=True)
-    #lockbox=db.Column(db.String(50), nullable=False)
-    #valve_number=db.Column(db.String(10), nullable=False)
-    #lock_position=db.Column(db.String(10), nullable=F)
+
     def __init__(self, description, lockout_author, date=None):
         self.description=description
         if date is None:
@@ -46,3 +44,17 @@ class Lockout(db.Model):
 
     def __repr__(self):
         return 'Lockout: {}'.format(self.lockout_author)
+
+class Lockout_Line(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    valve_number=db.Column(db.String(10), nullable=False)
+    lock_position=db.Column(db.String(10), nullable=False)
+    removal_position=db.Column(db.String(10), nullable=False)
+
+    def __init__(self, valve_number, lock_position, removal_position):
+        self.valve_number=valve_number
+        self.lock_position=lock_position
+        self.removal_position=removal_position
+
+    def __repr__(self):
+        return 'Valve #: {}'.format(self.valve_number)

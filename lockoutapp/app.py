@@ -1,6 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import Form
+from wtforms import StringField, PasswordField
+from wtforms.validators import InputRequired, Email, Length, AnyOf
+from flask_bootstrap import Bootstrap
 from io import BytesIO
 
 
@@ -15,6 +19,8 @@ app.config.from_object('config.DevelopmentConfig')
 #create sqlalchemy object
 db = SQLAlchemy(app)
 
+#instantiate bootstrap
+Bootstrap(app)
 
 from models import *
 # login required decorator
@@ -28,17 +34,17 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
+class LoginForm(Form):
+    username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
+    password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
+
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
-    error=''
-    user_lookup=db.session.query(User).all()
-    if request.method == 'POST':
-        if db.session.query(User).filter(User.username == request.form['username']).count() == 0:
-            error = 'Invalid credentials. Please try again or Register.'
-        else:
-            session['logged_in'] = True
-            return redirect(url_for('index'))
-    return render_template('login.html', error=error)
+    form=LoginForm()
+    if form.validate_on_submit():
+        session['logged_in'] = True
+        return redirect(url_for('index'))
+    return render_template('login.html', form=form)
 
 
 @app.route('/upload', methods = ['GET','POST'])
@@ -63,6 +69,19 @@ def lockout():
 def index():
     lockout=db.session.query(Lockout).first()
     return render_template('index.html', lockout=lockout)
+
+
+class RegisterForm(Form):
+    username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
+    password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    form=RegisterForm()
+    if form.validate_on_submit():
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
+
 
 @app.route('/logout')
 @login_required
