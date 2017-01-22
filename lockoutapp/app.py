@@ -34,6 +34,10 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
+class LockoutForm(Form):
+    description=StringField('Description', validators=[InputRequired()])
+
+
 class LoginForm(Form):
     username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
     password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
