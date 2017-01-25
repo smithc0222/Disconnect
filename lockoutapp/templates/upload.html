@@ -1,58 +1,72 @@
-
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
-<div class="jumbotron">
+<div class="container-fluid">
   <div class="text-center">
     <h1> Trinity Lockout Tagout </h1>
+    <hr>
+    <br>
   </div>
-  <br>
   <div class="row">
-    <div class="col-xs-6 form-group">
-    LOTO Number:
+    <div class="col-xs-3 col-xs-offset-3 form-group">
+      <h4> LOTO Number: {{ lockout.id }} </h4>
     </div>
     <div class="col-xs-6 form-group">
-    Lockout Developed By:
+      <h4>Lockout Developed By: {{ lockout.lockout_author.first_name }} {{ lockout.lockout_author.last_name }}</h4>
+    </div>
+    <div class="col-xs-3 col-xs-offset-3 form-group">
+      <h4>Date: {{ lockout.date }}</h4>
     </div>
     <div class="col-xs-6 form-group">
-    Date:
-    </div>
-    <div class="col-xs-6 form-group">
-    Workorder Number: TBD
+      <h4>Workorder Number: ___________________</h4>
     </div>
   </div>
-  <br>
-  <div class="col-xs-12 form-group">
-  Work Description:
+  <div class="col-xs-12">
+    <hr>
   </div>
-  <br>
-  <h4> PPE Required: </h4>
-
-  <div class="col-xs-6 form-group">
-    <input type="checkbox" name="goggles" value="yes"  checked> Goggles<br>
-    <input type="checkbox" name="faceshield" value="yes"> Face Shield<br>
-    <input type="checkbox" name="fullfacerespirator" value="yes"> Full Face Respirator<br>
-    <input type="checkbox" name="dustmask" value="yes"> Dust Mask<br>
-    <input type="checkbox" name="leathergloves" value="yes"> Leather Gloves<br>
-    <input type="checkbox" name="saranaxsuit" value="yes" checked> Saranax Suit<br>
+  <div class="col-xs-9 col-xs-offset-3 form-group">
+    <h4>Work Description: {{ lockout. description }}</h4>
   </div>
-  <div class="col-xs-6 form-group">
-    <input type="checkbox" name="nitrilegloves" value="yes"> Nitrile Gloves<br>
-    <input type="checkbox" name="chemicalgloves" value="yes"> Chemical Gloves<br>
-    <input type="checkbox" name="chemicalsuit" value="yes"> Chemical Suit<br>
-    <input type="checkbox" name="tyrexsuit" value="yes"> Tryex Suit<br>
-    <input type="checkbox" name="rubberboots" value="yes"> Rubber Boots<br>
-    <input type="checkbox" name="sar" value="yes"> SAR<br>
+  <div class="col-xs-12">
+    <hr>
   </div>
-  <div class="col-xs-6">
-    <h4>Other PPE:</h4>
+  <div class="col-xs-9 col-xs-offset-3">
+    <h3> PPE Required: </h3>
+    <br>
   </div>
-  <hr>
-  <br>
-  <div class="col-xs-6">
-    <h4>Lockout Authorized for Implementation by:</h4>
+  <div class="row">
+    <div class="col-xs-2 col-xs-offset-4 form-group">
+      <input type="checkbox" name="goggles" value="yes"  checked> Goggles<br>
+      <input type="checkbox" name="faceshield" value="yes"> Face Shield<br>
+      <input type="checkbox" name="fullfacerespirator" value="yes"> Full Face Respirator<br>
+      <input type="checkbox" name="dustmask" value="yes"> Dust Mask<br>
+      <input type="checkbox" name="leathergloves" value="yes"> Leather Gloves<br>
+      <input type="checkbox" name="saranaxsuit" value="yes" checked> Saranax Suit<br>
+    </div>
+    <div class="col-xs-2 form-group">
+      <input type="checkbox" name="nitrilegloves" value="yes"> Nitrile Gloves<br>
+      <input type="checkbox" name="chemicalgloves" value="yes"> Chemical Gloves<br>
+      <input type="checkbox" name="chemicalsuit" value="yes"> Chemical Suit<br>
+      <input type="checkbox" name="tyrexsuit" value="yes"> Tryex Suit<br>
+      <input type="checkbox" name="rubberboots" value="yes"> Rubber Boots<br>
+      <input type="checkbox" name="sar" value="yes"> SAR<br>
+    </div>
+  </div>
+  <div class="col-xs-9 col-xs-offset-3">
+    <h5> Other PPE: {{ lockout.ppe }} </h5>
+  </div>
+  <div class="col-xs-12">
+    <hr>
+  </div>
+  <div class="col-xs-9 col-xs-offset-3">
+    <h4>Lockout Authorized for Implementation by: {{ lockout.lockout_author.first_name }} {{ lockout.lockout_author.last_name }}</h4>
+  </div>
+  <div class="col-xs-12">
+    <hr>
   </div>
   <!-- Table -->
-  <table class="table table-sm">
+<div>
+  <table class="table">
     <thead>
       <tr>
         <th>Valve # / MCC #</th>
@@ -65,45 +79,35 @@
       </tr>
     </thead>
     <tbody>
+  {% for each in lockout_line %}
       <tr>
-        <th scope="row">{{ lockout_line.valve_number}}</th>
-          <td>{{ lockout_line.description }}</td>
-          <td>{{ lockout_line.lock_position }}</td>
+        <th scope="row">{{ each.valve_number}}</th>
+          <td>{{ each.description }}</td>
+          <td>{{ each.lock_position }}</td>
           <td></td>
           <td></td>
-          <td>{{ lockout_line.removal_position }}</td>
+          <td>{{ each.removal_position }}</td>
           <td></td>
       </tr>
-      <tr>
-        <th scope="row">{{ lockout_line.valve_number}}</th>
-          <td>{{ lockout_line.description }}</td>
-          <td>{{ lockout_line.lock_position }}</td>
-          <td></td>
-          <td></td>
-          <td>{{ lockout_line.removal_position }}</td>
-          <td></td>
-      </tr>
-      <tr>
-        <th scope="row">{{ lockout_line.valve_number}}</th>
-          <td>{{ lockout_line.description }}</td>
-          <td>{{ lockout_line.lock_position }}</td>
-          <td></td>
-          <td></td>
-          <td>{{ lockout_line.removal_position }}</td>
-          <td></td>
-      </tr>
+  {% endfor %}
     </tbody>
   </table>
-  <hr>
-  <form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
-    <div class="form-group">
-      <label class="control-label">Attach File</label>
-      <input id="attach" type="file" class="file" name="inputFile">
-      <br>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </form>
 </div>
+<div>
+    <hr>
+    <br>
+    <form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
+      <div class="col-xs-3 col-xs-offset-2 form-group">
+        <div class="jumbotron">
+        <label class="control-label">Attach File:</label>
+        <input id="attach" type="file" class="file" name="inputFile">
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+    </form>
+  </div>
+  </div>
 
 
 

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 <div class="jumbotron">
 <div class="text-center">
@@ -16,7 +17,7 @@
             <input class="form-control" type="text" value="{{ request.form.lockout_author }}" />
         </div>
         <div class="col-xs-6">
-            <label> Date: </label>
+            <label> Date: {{ lockout.date }}</label>
         </div>
         <div class="col-xs-6 form-group">
             <label>Workorder Number: </label>
@@ -27,8 +28,9 @@
 <div class="col-xs-12 form-group">
 <label> Work Description: </label>
 <input class="form-control" type="text" value="{{ request.form.description }}" />
-</div>
 <br>
+</div>
+
 <h4> PPE Required: </h4>
 
   <div class="col-xs-6 form-group">
@@ -48,12 +50,20 @@
   <input type="checkbox" name="rubberboots" value="rubberboots"> Rubber Boots<br>
   <input type="checkbox" name="sar" value="sar"> SAR<br>
   </div>
-  <label>Other PPE: </label>
-  <input type="text" name="otherppe" ><br>
-<hr>
+  <div class="col-xs-12">
+    <label>Other PPE: </label>
+    <input type="text" name="otherppe" ><br>
+  </div>
+  <div class="col-xs-12">
+    <hr>
+  </div>
+<div>
+    <label>Lockout Authorized for Implementation by: </label>
+    <input type="text" name="authorizedby">
 <br>
-<label>Lockout Authorized for Implementation by: </label>
-<input type="text" name="authorizedby">
+</div>
+<br>
+<br>
 <!-- Table -->
 <table class="table table-sm">
 <thead>
@@ -97,7 +107,7 @@
   </tr>
 </tbody>
 </table>
-
+<br>
   <input class="btn btn-default" type="submit" value="Save">
 </form>
 </div>

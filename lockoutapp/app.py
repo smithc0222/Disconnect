@@ -36,6 +36,8 @@ def login_required(f):
 
 class LockoutForm(Form):
     description=StringField('Description', validators=[InputRequired()])
+    ppe=StringField('Additional PPE')
+
 
 
 class LoginForm(Form):
@@ -59,8 +61,11 @@ def upload():
         this_file.filename=filename=files.filename
         this_file.data=files.read()
         db.session.commit()
-        return 'file uploaded'
-    return render_template('upload.html')
+        return render_template('upload.html')
+    else:
+        lockout=db.session.query(Lockout).first()
+        lockout_line=db.session.query(Lockout_Line).all()
+    return render_template('upload.html', lockout=lockout, lockout_line=lockout_line)
 
 
 @app.route('/lockout', methods=['POST', 'GET'])
