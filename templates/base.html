@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-
+    {% block head %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    {% endblock %}
   </head>
 
   <body>
@@ -24,11 +26,11 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/units">Units <span class="sr-only">(current)</span></a></li>
-        <li><a href="/parts">Parts</a></li>
+        <li class="active"><a href="/">Lockout Log <span class="sr-only">(current)</span></a></li>
+        <li><a href="/lockout">Create New Lockout</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/user">{{ logged_username }}</a></li>
+        <li><a href="/user">{CSMITH}</a></li>
         <li><a href="/logout">Logout</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
