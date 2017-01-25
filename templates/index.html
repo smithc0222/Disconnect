@@ -1,7 +1,42 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
-
-
+<div class="jumbotron">
+<div class="text-center">
+<h1> Trinity Lockout Tagout </h1>
+</div>
+<hr>
+<br>
+<div class="row">
+        <div class="col-xs-3 col-xs-offset-3 form-group">
+            <h3>{{ user.first_name }} {{ user.last_name }} </h3>
+        </div>
+        <div class="col-xs-6">
+            <h3> {{ today }} </h3>
+        </div>
+</div>
+<hr>
+<table class="table table-sm">
+<thead>
+  <tr>
+    <th>Lockout No:</th>
+    <th>Lockout Description</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Author</th>
+  </tr>
+</thead>
+<tbody>
+  {% for each in lockout %}
+  <tr>
+    <th scope="row">{{ each.id}}</th>
+    <td>{{ each.description }}</td>
+    <td>{{ each.date }}</td>
+    <td> Open </td>
+    <td>{{ each.lockout_author }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
 
 {% endblock %}

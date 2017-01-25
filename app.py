@@ -39,7 +39,6 @@ class LockoutForm(Form):
     ppe=StringField('Additional PPE')
 
 
-
 class LoginForm(Form):
     username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
     password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
@@ -71,13 +70,19 @@ def upload():
 @app.route('/lockout', methods=['POST', 'GET'])
 
 def lockout():
-    lockout=db.session.query(Lockout).first()
-    return render_template('lockout.html', lockout=lockout)
+
+    today=date.today()
+    user=db.session.query(User).first()
+    lockout=db.session.query(Lockout).all()
+    last_lockout=lockout[-1].id+1
+    return render_template('lockout.html', lockout=lockout, user=user, today=today, last_lockout=last_lockout)
 
 @app.route('/')
 def index():
-    lockout=db.session.query(Lockout).first()
-    return render_template('index.html', lockout=lockout)
+    today=date.today()
+    user=db.session.query(User).first()
+    lockout=db.session.query(Lockout).all()
+    return render_template('index.html', lockout=lockout, user=user, today=today)
 
 
 class RegisterForm(Form):
