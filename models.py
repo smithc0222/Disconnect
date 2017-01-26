@@ -44,14 +44,14 @@ class Lockout(db.Model):
         self.ppe=ppe
 
     def __repr__(self):
-        return 'Lockout: {}'.format(self.lockout_author)
+        return 'Lockout: {}'.format(self.id)
 
 class Lockout_Line(db.Model):
 
     __tablename__="lockout_line"
     id=db.Column(db.Integer, primary_key=True)
     valve_number=db.Column(db.String(10), nullable=False)
-    description=db.Column(db.String(100), nullable=True)
+    description=db.Column(db.String(50), nullable=True)
     lock_position=db.Column(db.String(10), nullable=False)
     removal_position=db.Column(db.String(10), nullable=False)
     lockout=db.relationship('Lockout', backref=db.backref('lockout', lazy='dynamic'))
