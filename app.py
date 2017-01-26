@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import Form
-from wtforms import StringField, PasswordField
+from wtforms import *
 from wtforms.validators import InputRequired, Email, Length, AnyOf
 from flask_bootstrap import Bootstrap
 from io import BytesIO
@@ -35,8 +35,26 @@ def login_required(f):
     return wrap
 
 class LockoutForm(Form):
-    description=StringField('Description', validators=[InputRequired()])
-    ppe=StringField('Additional PPE')
+    description=StringField('Description', validators=[InputRequired(), Length(min=2, max=300)])
+    goggles=BooleanField('Goggles')
+    faceshield=BooleanField('Face Shield')
+    fullface=BooleanField('Full Face Respirator')
+    dustmask=BooleanField('Dust Mask')
+    leathergloves=BooleanField('Leather Gloves')
+    saranax=BooleanField('Saranax Suit')
+    nitrilegloves=BooleanField('Nitrile Gloves')
+    chemicalgloves=BooleanField('Chemical Gloves')
+    chemicalsuit=BooleanField('Chemical Suit')
+    tyrex=BooleanField('Tyrex Suit')
+    rubberboots=BooleanField('Rubber Boots')
+    sar=BooleanField('SAR')
+    ppe=StringField('Other PPE:')
+
+class LockoutLineForm(Form):
+    valve_number=StringField(u'',validators=[InputRequired(), Length(max=10)])
+    description=StringField(u'',validators=[Length(max=50)])
+    lock_position=SelectField(u'Position', choices=[('open','Open'),('close','Close')])
+    removal_position=SelectField(u'Position', choices=[('open','Open'),('close','Close')])
 
 class LoginForm(Form):
     username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
@@ -70,6 +88,7 @@ def upload():
 def lockout():
     user=db.session.query(User).first()
     lockout_form=LockoutForm()
+    lockout_line_form=LockoutLineForm()
     today=date.today()
     user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
@@ -79,7 +98,7 @@ def lockout():
         db.session.commit()
         return redirect(url_for('index'))
     else:
-        return render_template('lockout.html', lockout=lockout, user=user, today=today, last_lockout=last_lockout, lockout_form=lockout_form)
+        return render_template('lockout.html', lockout=lockout, user=user, today=today, last_lockout=last_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
 
 @app.route('/lockout/<int:this_lockout_id>', methods=['GET'])
 def this_lockout(this_lockout_id):

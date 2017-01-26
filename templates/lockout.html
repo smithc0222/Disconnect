@@ -22,39 +22,39 @@
 <br>
 <form  method="POST" action="/lockout">
   <div class="col-xs-12 form-group">
-    <label> Work Description: </label>
-      {{ lockout_form.description }}
+    {{ wtf.form_field(lockout_form.description) }}
   </div>
 <br>
 <h4> PPE Required: </h4>
 
   <div class="col-xs-6 form-group">
-  <input type="checkbox" name="goggles" value="yes"  > Goggles<br>
-  <input type="checkbox" name="faceshield" value="faceshield"> Face Shield<br>
-  <input type="checkbox" name="fullfacerespirator" value="fullfacerespirator"> Full Face Respirator<br>
-  <input type="checkbox" name="dustmask" value="dustmask" > Dust Mask<br>
-  <input type="checkbox" name="leathergloves" value="leathergloves"> Leather Gloves<br>
-  <input type="checkbox" name="saranaxsuit" value="saranaxsuit" > Saranax Suit<br>
+    {{ wtf.form_field(lockout_form.goggles) }}
+    {{ wtf.form_field(lockout_form.faceshield) }}
+    {{ wtf.form_field(lockout_form.fullface) }}
+    {{ wtf.form_field(lockout_form.dustmask) }}
+    {{ wtf.form_field(lockout_form.leathergloves) }}
+    {{ wtf.form_field(lockout_form.saranax) }}
 
   </div>
   <div class="col-xs-6 form-group">
-  <input type="checkbox" name="nitrilegloves" value="nitrilegloves"> Nitrile Gloves<br>
-  <input type="checkbox" name="chemicalgloves" value="chemicalgloves" > Chemical Gloves<br>
-  <input type="checkbox" name="chemicalsuit" value="chemicalsuit"> Chemical Suit<br>
-  <input type="checkbox" name="tyrexsuit" value="tyrexsuit"> Tryex Suit<br>
-  <input type="checkbox" name="rubberboots" value="rubberboots"> Rubber Boots<br>
-  <input type="checkbox" name="sar" value="sar"> SAR<br>
+  {{ wtf.form_field(lockout_form.nitrilegloves) }}
+  {{ wtf.form_field(lockout_form.chemicalgloves) }}
+  {{ wtf.form_field(lockout_form.chemicalsuit) }}
+  {{ wtf.form_field(lockout_form.tyrex) }}
+  {{ wtf.form_field(lockout_form.rubberboots) }}
+  {{ wtf.form_field(lockout_form.sar) }}
   </div>
   <div class="col-xs-12 form-group">
-    <label>Other PPE: </label>
-    {{ lockout_form.ppe }}<br>
+    {{ wtf.form_field(lockout_form.ppe) }}<br>
   </div>
 <!-- <div class="col-xs-12 form-group">
     <label>Lockout Authorized for Implementation by: </label>
     <input type="text" name="authorizedby" value="{{ request.form.authorized_by }}"> -->
 <br>
 <br>
+</form>
 <!-- Table -->
+<form  method="POST" action="/lockout_line">
 <table class="table">
   <thead>
     <tr>
@@ -69,62 +69,33 @@
   </thead>
   <tbody>
     <tr>
-      <th scope="row"><input type="text" name="valve_number" value="{{ request.form.valve_number}}"></th>
-        <td><input type="text" name="description" value="{{ request.form.description}}"></td>
-        <td><input type="radio" name="lock_position_1" value="open">Open<br>
-            <input type="radio" name="lock_position_1" value="close">Close</td>
+      <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
+        <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
+        <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
+        <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
       <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
       <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-        <td><input type="radio" name="removal_position_1" value="open">Open<br>
-            <input type="radio" name="removal_position_1" value="close">Close</td>
       <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td> -->
     </tr>
     <tr>
-      <th scope="row"><input type="text" name="valve_number" value="{{ request.form.valve_number}}"></th>
-        <td><input type="text" name="description" value="{{ request.form.description}}"></td>
-        <td><input type="radio" name="lock_position_2" value="open">Open<br>
-            <input type="radio" name="lock_position_2" value="close">Close</td>
+      <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
+        <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
+        <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
+        <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
       <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
       <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-        <td><input type="radio" name="removal_position_2" value="open">Open<br>
-            <input type="radio" name="removal_position_2" value="close">Close</td>
-      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td>-->
-    </tr>
-    <tr>
-      <th scope="row"><input type="text" name="valve_number" value="{{ request.form.valve_number}}"></th>
-        <td><input type="text" name="description" value="{{ request.form.description}}"></td>
-        <td><input type="radio" name="lock_position_3" value="open">Open<br>
-            <input type="radio" name="lock_position_3" value="close">Close</td>
-      <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
-      <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-        <td><input type="radio" name="removal_position_3" value="open">Open<br>
-            <input type="radio" name="removal_position_3" value="close">Close</td>
-      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td>-->
-    </tr>
-    <tr>
-      <th scope="row"><input type="text" name="valve_number" value="{{ request.form.valve_number}}"></th>
-        <td><input type="text" name="description" value="{{ request.form.description}}"></td>
-        <td><input type="radio" name="lock_position_4" value="open">Open<br>
-            <input type="radio" name="lock_position_4" value="close">Close</td>
-      <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
-      <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-        <td><input type="radio" name="removal_position_4" value="close">Open<br>
-            <input type="radio" name="removal_position_4" value="open">Close</td>
-      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td>-->
-    </tr>
-    <tr>
-        <th><input class="btn btn-primary" type="new_line" value="Add Line"></th>
-        <td></td>
-        <td></td>
-        <td></td>
+      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td> -->
     </tr>
   </tbody>
 </table>
 <hr>
-<div class="col-xs-4 col-xs-offset-10">
-  <input class="col-xs-4 btn btn-danger" type="submit" value="Save">
+<div class="col-xs-4">
+  <input class="btn btn-primary" type="new_line" value="Add Line">
 </div>
 </form>
+<div class="col-xs-4 col-xs-offset-4 ">
+  <input class="col-xs-4 btn btn-danger" type="submit" value="Save">
+</div>
 </div>
 </div>
 
