@@ -68,14 +68,22 @@ def upload():
 
 
 @app.route('/lockout', methods=['POST', 'GET'])
-
 def lockout():
 
     today=date.today()
     user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
-    last_lockout=lockout[-1].id+1
+    last_lockout=lockout[-1]
     return render_template('lockout.html', lockout=lockout, user=user, today=today, last_lockout=last_lockout)
+
+@app.route('/lockout/<int:this_lockout_id>', methods=['GET'])
+def this_lockout(this_lockout_id):
+    this_lockout_id-=1
+    lockout=db.session.query(Lockout).all()
+    this_lockout=lockout[this_lockout_id]
+    lockout_line=db.session.query(Lockout_Line).filter_by(lockout_id=this_lockout_id).all()
+    return render_template('upload.html', this_lockout=this_lockout, lockout_line=lockout_line)
+
 
 @app.route('/')
 def index():
