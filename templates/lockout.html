@@ -10,7 +10,7 @@
 <br>
   <div class="row">
       <div class="col-xs-4">
-          <h4>  LOTO Number: {{last_lockout.id}} </h4>
+          <h4>  LOTO Number: {{ next_lockout }} </h4>
       </div>
       <div class="col-xs-4 form-group">
           <h4>  Developed by: {{user.first_name}} </h4>
@@ -48,9 +48,7 @@
   <div class="col-xs-12 form-group">
     {{ wtf.form_field(lockout_form.ppe) }}<br>
   </div>
-<!-- <div class="col-xs-12 form-group">
-    <label>Lockout Authorized for Implementation by: </label>
-    <input type="text" name="authorizedby" value="{{ request.form.authorized_by }}"> -->
+
 <br>
 <br>
 
@@ -61,10 +59,7 @@
       <th>Valve # / MCC #</th>
       <th>Item Description / Location</th>
       <th>Lock Position</th>
-<!-- <th>Lock #</th>-->
-<!--  <th>Try Out</th> -->
       <th>Removal Position</th>
-<!--  <th>Lock/Tag Removed</th> -->
     </tr>
   </thead>
   <tbody>
@@ -73,18 +68,12 @@
         <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
         <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
         <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
-      <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
-      <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td> -->
     </tr>
     <tr>
       <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
         <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
         <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
         <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
-      <!--  <td><input type="text" name="lock_number" value="{{ request.form.lock_number}}"></td> -->
-      <!--  <td><input type="checkbox" name="try_out" value="{{ request.form.try_out}}"></td> -->
-      <!--  <td><input type="checkbox" name="verify_removed" value="{{ request.form.removed_verified}}"></td> -->
     </tr>
   </tbody>
 </table>

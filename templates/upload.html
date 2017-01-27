@@ -21,51 +21,52 @@
       <h4>Workorder Number: ___________________</h4>
     </div>
   </div>
-  <div class="col-xs-12">
+
     <hr>
-  </div>
+
   <div class="col-xs-9 col-xs-offset-3 form-group">
     <h4>Work Description: {{ this_lockout.description }}</h4>
   </div>
   <div class="col-xs-12">
     <hr>
   </div>
+  <div class="text-center">
+    <h3><u> PPE Required: </u></h3>
+    <br>
+      <ul>
+        {% if this_lockout.goggles == True %}
+          <li>Goggles</li>
+        {% endif %}
+        {% if this_lockout.faceshield == True %}
+          <li>Face Shield</li>
+        {% endif %}
+        {% if this_lockout.fullface == True %}
+          <li>Full Face Respirator</li>
+        {% endif %}
+        {% if this_lockout.dustmask == True %}
+          <li>Dust Mask</li>
+        {% endif %}
+        {% if this_lockout.leathergloves == True %}
+          <li>Leather Gloves</li>
+        {% endif %}
+        {% if this_lockout.saranax == True %}
+          <li>Saranax Suit</li>
+        {% endif %}
+      </ul>
+    </div>
   <div class="col-xs-9 col-xs-offset-3">
-    <h3> PPE Required: </h3>
+    <h4> Other PPE: {{ this_lockout.ppe }} </h4>
+  </div>
+  <div class="col-xs-12">
+    <hr>
+  </div>
+  <br>
+  <div class="text-center">
+    <h4>Lockout Authorized for Implementation by:____________________________________________</h4>
     <br>
   </div>
-  <div class="row">
-    <div class="col-xs-2 col-xs-offset-4 form-group">
-      <input type="checkbox" name="goggles" value="yes" > Goggles<br>
-      <input type="checkbox" name="faceshield" value="yes"> Face Shield<br>
-      <input type="checkbox" name="fullfacerespirator" value="yes"> Full Face Respirator<br>
-      <input type="checkbox" name="dustmask" value="yes"> Dust Mask<br>
-      <input type="checkbox" name="leathergloves" value="yes"> Leather Gloves<br>
-      <input type="checkbox" name="saranaxsuit" value="yes"> Saranax Suit<br>
-    </div>
-    <div class="col-xs-2 form-group">
-      <input type="checkbox" name="nitrilegloves" value="yes"> Nitrile Gloves<br>
-      <input type="checkbox" name="chemicalgloves" value="yes"> Chemical Gloves<br>
-      <input type="checkbox" name="chemicalsuit" value="yes"> Chemical Suit<br>
-      <input type="checkbox" name="tyrexsuit" value="yes"> Tryex Suit<br>
-      <input type="checkbox" name="rubberboots" value="yes"> Rubber Boots<br>
-      <input type="checkbox" name="sar" value="yes"> SAR<br>
-    </div>
-  </div>
-  <div class="col-xs-9 col-xs-offset-3">
-    <h5> Other PPE: {{ this_lockout.ppe }} </h5>
-  </div>
-  <div class="col-xs-12">
-    <hr>
-  </div>
-  <div class="col-xs-9 col-xs-offset-3">
-    <h4>Lockout Authorized for Implementation by: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
-  </div>
-  <div class="col-xs-12">
-    <hr>
-  </div>
+
   <!-- Table -->
-<div>
   <table class="table">
     <thead>
       <tr>
@@ -92,22 +93,18 @@
   {% endfor %}
     </tbody>
   </table>
-</div>
-<div>
-    <hr>
-    <br>
-    <form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
-      <div class="col-xs-3 col-xs-offset-2 form-group">
-        <div class="jumbotron">
-        <label class="control-label">Attach File:</label>
-        <input id="attach" type="file" class="file" name="inputFile">
+  <hr>
+  <br>
+
+  <div class="jumbotron col-xs-4 col-xs-offset-4">
+    <form method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}">
+        <label for="attach">Attach File and Close:</label>
+        <input  id="attach" type="file" class="file" name="inputFile">
         <br>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
-    </div>
+        <button  type="submit" class="btn btn-danger">Submit</button>
     </form>
   </div>
-  </div>
+</div>
 
 
 

@@ -16,9 +16,11 @@
         </div>
 </div>
 <hr>
+<!-- OPEN TABLE --------------------------------------------->
+<h4>Open</h4>
 <table class="table table-sm">
 <thead>
-  <tr>
+  <tr style="background-color: #A2FBA2;">
     <th>Lockout No:</th>
     <th>Lockout Description</th>
     <th>Date</th>
@@ -27,16 +29,50 @@
   </tr>
 </thead>
 <tbody>
-  {% for each in lockout %}
-  <tr>
-    <th scope="row">{{ each.id}}</th>
+  {% for each in open_lockouts %}
+  <tr >
+    <th scope="row" ><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
     <td>{{ each.description }}</td>
     <td>{{ each.date }}</td>
-    <td> Open </td>
+    {% if each.status == True %}
+    <td>Open</td>
+    {% else %}
+    <td>Closed</td>
+    {% endif %}
     <td>{{ each.lockout_author.last_name }}</td>
   </tr>
   {% endfor %}
 </tbody>
 </table>
+<hr>
+<!-- CLOSE TABLE _____________________-->
+<h4>Closed</h4>
+  <table class="table table-sm">
+    <thead>
+      <tr style="background-color: #FF9999;">
+        <th>Lockout No:</th>
+        <th>Lockout Description</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Author</th>
+      </tr>
+    </thead>
+  <tbody>
+    {% for each in closed_lockouts %}
+    <tr>
+      <th scope="row"><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
+      <td>{{ each.description }}</td>
+      <td>{{ each.date }}</td>
+      {% if each.status == True %}
+      <td>Open</td>
+      {% else %}
+      <td>Closed</td>
+      {% endif %}
+      <td>{{ each.lockout_author.last_name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<hr>
 
 {% endblock %}

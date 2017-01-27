@@ -29,18 +29,44 @@ class Lockout(db.Model):
     lockout_author = db.relationship('User', backref=db.backref('lockout_author', lazy='dynamic'))
     user_id=db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
     filename=db.Column(db.String(300), nullable=True)
-
-    data=db.column(db.LargeBinary)
+    status=db.Column(db.Boolean(), default=True)
+    goggles=db.Column(db.Boolean(), default=False)
+    faceshield=db.Column(db.Boolean(),default=False)
+    fullface=db.Column(db.Boolean(), default=False)
+    dustmask=db.Column(db.Boolean(), default=False)
+    leathergloves=db.Column(db.Boolean(), default=False)
+    saranax=db.Column(db.Boolean(), default=False)
+    nitrilegloves=db.Column(db.Boolean(), default=False)
+    chemicalgloves=db.Column(db.Boolean(), default=False)
+    chemicalsuit=db.Column(db.Boolean(),default=False)
+    tyrex=db.Column(db.Boolean(),default=False)
+    rubberboots=db.Column(db.Boolean(),default=False)
+    sar=db.Column(db.Boolean(),default=False)
+    data=db.Column(db.LargeBinary(),nullable=True,)
     date=db.Column(db.DateTime)
     ppe=db.Column(db.String(50), nullable=True)
 
 
-    def __init__(self, description, lockout_author, ppe, date=None):
+    def __init__(self, description, lockout_author, goggles, faceshield,
+        fullface, dustmask, leathergloves, saranax, nitrilegloves, chemicalsuit, chemicalgloves,
+        tyrex, rubberboots, sar, ppe, date=None):
         self.description=description
         if date is None:
             date = datetime.utcnow()
         self.date = date
         self.lockout_author=lockout_author
+        self.goggles=goggles
+        self.faceshield=faceshield
+        self.fullface=fullface
+        self.dustmask=dustmask
+        self.leathergloves=leathergloves
+        self.saranax=saranax
+        self.nitrilegloves=nitrilegloves
+        self.chemicalsuit=chemicalsuit
+        self.chemicalgloves=chemicalgloves
+        self.tyrex=tyrex
+        self.rubberboots=rubberboots
+        self.sar=sar
         self.ppe=ppe
 
     def __repr__(self):
