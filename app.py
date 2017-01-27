@@ -87,14 +87,15 @@ def upload():
 @app.route('/lockout', methods=['POST', 'GET'])
 def lockout():
     user=db.session.query(User).first()
-    lockout_form=LockoutForm()
-    lockout_line_form=LockoutLineForm()
+    lockout_form=LockoutForm(request.form)
+    lockout_line_form=LockoutLineForm(request.form)
     today=date.today()
     user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1]
     if request.method == "POST":
-        new_lockout=db.session.add(Lockout(description=lockout_form.description.data,lockout_author=user,ppe=lockout_form.ppe.data))
+        new_lockout=Lockout(description=lockout_form.description.data,lockout_author=user,ppe=lockout_form.ppe.data)
+        db.session.add(new_lockout)
         db.session.commit()
         return redirect(url_for('index'))
     else:
