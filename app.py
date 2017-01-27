@@ -35,11 +35,11 @@ def login_required(f):
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
-    form=LoginForm()
-    if form.validate_on_submit():
+    login_form=LoginForm()
+    if login_form.validate_on_submit():
         session['logged_in'] = True
         return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+    return render_template('login.html', login_form=login_form)
 
 
 @app.route('/upload', methods = ['GET','POST'])
@@ -56,7 +56,10 @@ def lockout():
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1].id
     next_lockout=last_lockout+1
-    if request.method == "POST":
+
+
+    if request.method == 'POST' and lockout_form["save"].id == "save":
+
         new_lockout=Lockout(description=lockout_form.description.data,
                             lockout_author=user,
                             goggles=lockout_form.goggles.data,
@@ -73,8 +76,17 @@ def lockout():
                             sar=lockout_form.sar.data,
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
+
+        new_lockout_lines=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
+                        description=lockout_line_form.description.data,
+                        lock_position=lockout_line_form.lock_position.data,
+                        removal_position=lockout_line_form.removal_position.data,
+                        lockout=new_lockout)
+        db.session.add(new_lockout_lines)
+        
         db.session.commit()
         return redirect(url_for('index'))
+
     else:
         return render_template('lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
 

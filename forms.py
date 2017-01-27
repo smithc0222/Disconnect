@@ -1,6 +1,6 @@
 from flask_wtf import *
 from wtforms import *
-from wtforms.validators import InputRequired, Email, Length, AnyOf
+from wtforms.validators import *
 
 class RegisterForm(Form):
     username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
@@ -25,9 +25,11 @@ class LockoutForm(Form):
     rubberboots=BooleanField('Rubber Boots')
     sar=BooleanField('SAR')
     ppe=StringField('Other PPE:')
+    save=SubmitField('Save')
 
 class LockoutLineForm(Form):
     valve_number=StringField(u'',validators=[InputRequired(), Length(max=10)])
     description=StringField(u'',validators=[Length(max=50)])
-    lock_position=SelectField(u'Position', choices=[('open','Open'),('close','Close')])
-    removal_position=SelectField(u'Position', choices=[('open','Open'),('close','Close')])
+    lock_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
+    removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
+    add_line=SubmitField('Add Line')
