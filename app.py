@@ -83,7 +83,7 @@ def lockout():
                         removal_position=lockout_line_form.removal_position.data,
                         lockout=new_lockout)
         db.session.add(new_lockout_lines)
-        
+
         db.session.commit()
         return redirect(url_for('index'))
 
@@ -93,7 +93,7 @@ def lockout():
 @app.route('/lockout/<int:this_lockout_id>', methods=['POST', 'GET'])
 def this_lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
-    lockout_line=db.session.query(Lockout_Line).filter_by(lockout_id=this_lockout.id).all()
+    lockout_lines=this_lockout.lockout
     if request.method=='POST':
         files = request.files['inputFile']
         this_file=db.session.query(Lockout).first()
@@ -103,7 +103,7 @@ def this_lockout(this_lockout_id):
         db.session.commit()
         return redirect(url_for('index'))
     else:
-        return render_template('upload.html', this_lockout=this_lockout, lockout_line=lockout_line)
+        return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines)
 
 
 @app.route('/')
