@@ -46,6 +46,26 @@ def login():
 def upload():
     return render_template('upload.html')
 
+
+@app.route('/save_lockout', methods=['POST', 'GET'])
+def save_lockout():
+    all_lockout=db.session.query(Lockout).all()
+    this_lockout=all_lockout[-1]
+    lockout_line_form=LockoutLineForm(request.form)
+    lockout_lines=this_lockout.lockout
+    if request.method == 'POST':
+        new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
+                        line_description=lockout_line_form.line_description.data,
+                        lock_position=lockout_line_form.lock_position.data,
+                        removal_position=lockout_line_form.removal_position.data,
+                        lockout=this_lockout)
+        db.session.add(new_lockout_line)
+        db.session.commit()
+        return redirect(url_for('save_lockout'))
+    else:
+        return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines)
+
+
 @app.route('/lockout', methods=['POST', 'GET'])
 def lockout():
     user=db.session.query(User).first()
@@ -77,15 +97,16 @@ def lockout():
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
         print(new_lockout.lockout_description)
-        new_lockout_lines=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
+
+        new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
                         line_description=lockout_line_form.line_description.data,
                         lock_position=lockout_line_form.lock_position.data,
                         removal_position=lockout_line_form.removal_position.data,
                         lockout=new_lockout)
-        db.session.add(new_lockout_lines)
-        print(new_lockout_lines.line_description)
+        db.session.add(new_lockout_line)
+        print(new_lockout_line.line_description)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('save_lockout'))
 
     else:
         return render_template('lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
