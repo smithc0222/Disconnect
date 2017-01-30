@@ -58,9 +58,9 @@ def lockout():
     next_lockout=last_lockout+1
 
 
-    if request.method == 'POST' and lockout_form["save"].id == "save":
+    if request.method == 'POST':
 
-        new_lockout=Lockout(description=lockout_form.description.data,
+        new_lockout=Lockout(lockout_description=lockout_form.lockout_description.data,
                             lockout_author=user,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
@@ -76,14 +76,14 @@ def lockout():
                             sar=lockout_form.sar.data,
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
-
+        print(new_lockout.lockout_description)
         new_lockout_lines=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
-                        description=lockout_line_form.description.data,
+                        line_description=lockout_line_form.line_description.data,
                         lock_position=lockout_line_form.lock_position.data,
                         removal_position=lockout_line_form.removal_position.data,
                         lockout=new_lockout)
         db.session.add(new_lockout_lines)
-
+        print(new_lockout_lines.line_description)
         db.session.commit()
         return redirect(url_for('index'))
 

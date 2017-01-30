@@ -32,7 +32,7 @@
   {% for each in open_lockouts %}
   <tr >
     <th scope="row" ><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
-    <td>{{ each.description }}</td>
+    <td>{{ each.lockout_description }}</td>
     <td>{{ each.date }}</td>
     {% if each.status == True %}
     <td>Open</td>
@@ -61,7 +61,7 @@
     {% for each in closed_lockouts %}
     <tr>
       <th scope="row"><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
-      <td>{{ each.description }}</td>
+      <td>{{ each.lockout_description }}</td>
       <td>{{ each.date }}</td>
       {% if each.status == True %}
       <td>Open</td>

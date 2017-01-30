@@ -11,7 +11,7 @@ class LoginForm(Form):
     password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
 
 class LockoutForm(Form):
-    description=StringField('Description', validators=[InputRequired(), Length(min=2, max=300)])
+    lockout_description=StringField('Description', validators=[InputRequired(), Length(min=2, max=300)])
     goggles=BooleanField('Goggles')
     faceshield=BooleanField('Face Shield')
     fullface=BooleanField('Full Face Respirator')
@@ -25,11 +25,9 @@ class LockoutForm(Form):
     rubberboots=BooleanField('Rubber Boots')
     sar=BooleanField('SAR')
     ppe=StringField('Other PPE:')
-    save=SubmitField('Save')
 
 class LockoutLineForm(Form):
     valve_number=StringField(u'',validators=[InputRequired(), Length(max=10)])
-    description=StringField(u'',validators=[Length(max=50)])
+    line_description=StringField(u'',validators=[Length(max=50)])
     lock_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
     removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
-    add_line=SubmitField('Add Line')

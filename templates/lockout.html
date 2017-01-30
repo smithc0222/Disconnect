@@ -3,11 +3,9 @@
 {% block content %}
 <div class="container-fluid">
   <div class="jumbotron">
-    <div>
       <div class="text-center">
         <h1> Trinity Lockout Tagout </h1>
       </div>
-      <div>
         <br>
         <div class="row">
             <div class="col-xs-4">
@@ -22,10 +20,10 @@
         </div>
       <br>
         <div class="form-group">
-          <form  method="POST" action="/lockout" id="form1">
+          <form  method="POST" action="/lockout">
             {{ wtf.csrf_token }}
             <div class="col-xs-12 form-group">
-              {{ wtf.form_field(lockout_form.description) }}
+              {{ wtf.form_field(lockout_form.lockout_description) }}
             </div>
           <br>
           <h4> PPE Required: </h4>
@@ -49,21 +47,11 @@
             <div class="col-xs-12 form-group">
               {{ wtf.form_field(lockout_form.ppe) }}<br>
             </div>
-            <div class="col-xs-12">
-              {{ wtf.form_field(lockout_form.save)}}
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
     <br>
     <br>
 
   <!-- Table -->
-  <div class="form-group">
-    <form method="POST" action="/lockout" id="form2">
-       {{ wtf.csrf_token }}
-      <table class="table">
+      <table class="table" id="lines_table">
         <thead>
           <tr>
             <th>Valve # / MCC #</th>
@@ -75,21 +63,22 @@
         <tbody>
           <tr>
             <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
-              <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
+              <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
               <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
               <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
           </tr>
           <tr>
             <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
-              <td>{{ wtf.form_field(lockout_line_form.description) }}</td>
+              <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
               <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
               <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
           </tr>
         </tbody>
       </table>
+
     <hr>
-      <div class="col-xs-4">
-        {{ wtf.form_field(lockout_line_form.add_line) }}
+      <div class="col-xs-12">
+        <button class="btn" type="submit">Save</button>
       </div>
     </form>
   </div>
