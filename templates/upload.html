@@ -9,29 +9,29 @@
       </div>
         <br>
         <div class="row">
-          <div class="col-xs-3 col-xs-offset-3 form-group">
+          <div class="col-md-3 col-md-offset-3 form-group">
             <h4> LOTO Number: {{ this_lockout.id }} </h4>
           </div>
-          <div class="col-xs-6 form-group">
+          <div class="col-md-6 form-group">
             <h4>Lockout Developed By: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
           </div>
-          <div class="col-xs-3 col-xs-offset-3 form-group">
+          <div class="col-md-3 col-md-offset-3 form-group">
             <h4>Date: {{ this_lockout.date }}</h4>
           </div>
-          <div class="col-xs-6 form-group">
+          <div class="col-md-6 form-group">
             <h4>Workorder Number: ___________________</h4>
           </div>
         </div>
       <br>
       <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-12">
           <h4>Lockout Description: <u>{{ this_lockout.lockout_description }}</u></h4>
         </div>
       </div>
           <br>
           <h4> PPE Required: </h4>
 
-            <div class="col-xs-6 form-group">
+            <div class="col-md-6 form-group">
               <ul>
                 {% if this_lockout.goggles == True %}
                   <li>Goggles</li>
@@ -54,7 +54,7 @@
               </ul>
             </div>
           <div class="row">
-            <div class="col-xs-12 form-group">
+            <div class="col-xs-md form-group">
               <h4>Other PPE:<u>{{ this_lockout.ppe }}</u></h4>
             </div>
           </div>

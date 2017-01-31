@@ -8,13 +8,13 @@
       </div>
         <br>
         <div class="row">
-            <div class="col-xs-4">
+            <div class="col-md-4">
                 <h4>  LOTO Number: {{ next_lockout }} </h4>
             </div>
-            <div class="col-xs-4 form-group">
+            <div class="col-md-4 form-group">
                 <h4>  Developed by: {{user.first_name}} </h4>
             </div>
-            <div class="col-xs-4">
+            <div class="col-md-4">
                 <h4>  Date: {{today}} </h4>
             </div>
         </div>
@@ -28,7 +28,7 @@
           <br>
           <h4> PPE Required: </h4>
 
-            <div class="col-xs-6 form-group">
+            <div class="col-md-6 form-group">
               {{ wtf.form_field(lockout_form.goggles) }}
               {{ wtf.form_field(lockout_form.faceshield) }}
               {{ wtf.form_field(lockout_form.fullface) }}
@@ -36,7 +36,7 @@
               {{ wtf.form_field(lockout_form.leathergloves) }}
               {{ wtf.form_field(lockout_form.saranax) }}
             </div>
-            <div class="col-xs-6 form-group">
+            <div class="col-md-6 form-group">
             {{ wtf.form_field(lockout_form.nitrilegloves) }}
             {{ wtf.form_field(lockout_form.chemicalgloves) }}
             {{ wtf.form_field(lockout_form.chemicalsuit) }}
@@ -44,7 +44,7 @@
             {{ wtf.form_field(lockout_form.rubberboots) }}
             {{ wtf.form_field(lockout_form.sar) }}
             </div>
-            <div class="col-xs-12 form-group">
+            <div class="col-md-12 form-group">
               {{ wtf.form_field(lockout_form.ppe) }}<br>
             </div>
     <br>
