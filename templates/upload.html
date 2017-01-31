@@ -5,7 +5,7 @@
 <div class="container-fluid">
   <div class="jumbotron">
       <div class="text-center">
-        <h1> Trinity Lockout Tagout </h1>
+        <h1> Lockout Tagout </h1>
       </div>
         <br>
         <div class="row">
@@ -94,13 +94,13 @@
   <form method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}">
     <div class="form-group">
       <label for="attach">Attach File and Close:</label>
-      <input id="attach" type="file" class="file" name="inputFile">
+      <input id="attach" type="file" class="file" name="file">
       <br>
       <button  type="submit" class="btn btn-danger">Submit</button>
     </div>
   </form>
   <hr>
-    <a class="btn btn-warning btn-lg btn-block" href="/static/lockout/{{this_lockout.filename}}">Download</a>
+    <a class="btn btn-warning btn-lg btn-block" href="/static/lockout/{{this_lockout.filename}}" download="{{this_lockout.filename}}">Download Saved PDF</a>
   </div>
 </div>
 

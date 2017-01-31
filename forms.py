@@ -1,17 +1,17 @@
-from flask_wtf import *
-from wtforms import *
-from wtforms.validators import *
+from flask_wtf import Form
+from wtforms import StringField, BooleanField, PasswordField, SelectField, validators
 
 class RegisterForm(Form):
-    username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
-    password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
+    username=StringField('Username', [validators.Length(min=6, max=35)])
+    password = PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])
+
 
 class LoginForm(Form):
-    username=StringField('Trinity Email', validators=[InputRequired(), Email(message='I don\'t recognize your email')])
-    password=PasswordField('Password', validators=[InputRequired(), Length(min=5, max=20), AnyOf(['secret','password'])])
+    username=StringField('Username', [validators.Length(min=6, max=35)])
+    password = PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])
 
 class LockoutForm(Form):
-    lockout_description=StringField('Description', validators=[InputRequired(), Length(min=2, max=300)])
+    lockout_description=StringField('Description', [validators.Length(min=2, max=300)])
     goggles=BooleanField('Goggles')
     faceshield=BooleanField('Face Shield')
     fullface=BooleanField('Full Face Respirator')
@@ -27,7 +27,7 @@ class LockoutForm(Form):
     ppe=StringField('Other PPE:')
 
 class LockoutLineForm(Form):
-    valve_number=StringField(u'',validators=[InputRequired(), Length(max=10)])
-    line_description=StringField(u'',validators=[Length(max=50)])
+    valve_number=StringField(u'',[validators.Length(max=10)])
+    line_description=StringField(u'',[validators.Length(max=50)])
     lock_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
     removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])

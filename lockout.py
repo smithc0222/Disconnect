@@ -1,9 +1,7 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, send_from_directory
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_from_directory
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from werkzeug.utils import secure_filename
-from io import BytesIO
 
 
 #create app object
@@ -11,13 +9,14 @@ app = Flask(__name__)
 
 #config
 import os
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object('config.PythonAnywhereConfig')
 
 #create sqlalchemy object
 db = SQLAlchemy(app)
 
 #instantiate bootstrap
 Bootstrap(app)
+
 from forms import *
 from models import *
 
@@ -46,11 +45,10 @@ def login():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    form=RegisterForm()
-    if form.validate_on_submit():
+    register_form=RegisterForm()
+    if register_form.validate_on_submit():
         return redirect(url_for('index'))
-    return render_template('register.html', form=form)
-
+    return render_template('register.html', register_form=register_form)
 
 
 @app.route('/upload', methods = ['GET','POST'])
@@ -126,13 +124,17 @@ def this_lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
     if request.method=='POST':
-        files = request.files['inputFile']
+        files = request.files['file']
+        filename=files.filename
+        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
         this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
-        this_file.filename=filename=files.filename
+        this_file.filename=files.filename
         this_file.data=files.read()
         this_lockout.status=False
         db.session.commit()
-        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
         return redirect(url_for('index'))
 
     else:
@@ -147,19 +149,15 @@ def allowed_file(filename):
 @app.route('/static/lockout/<filename>')
 def uploaded_file(filename):
 
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/')
 def index():
     today=date.today()
     user=db.session.query(User).first()
-    lockout=db.session.query(Lockout).all()
     open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
     closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
     return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
-
-
 
 
 @app.route('/logout')
@@ -168,6 +166,3 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    app.run()
