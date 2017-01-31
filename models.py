@@ -42,7 +42,7 @@ class Lockout(db.Model):
     tyrex=db.Column(db.Boolean(),default=False)
     rubberboots=db.Column(db.Boolean(),default=False)
     sar=db.Column(db.Boolean(),default=False)
-    data=db.Column(db.LargeBinary(),nullable=True,)
+    data=db.Column(db.LargeBinary(),nullable=True)
     date=db.Column(db.DateTime)
     ppe=db.Column(db.String(50), nullable=True)
 

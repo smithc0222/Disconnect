@@ -1,7 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, send_from_directory
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+from werkzeug.utils import secure_filename
 from io import BytesIO
 
 
@@ -19,6 +20,8 @@ db = SQLAlchemy(app)
 Bootstrap(app)
 from forms import *
 from models import *
+
+
 
 #------------------------------------------------------
 # login required decorator
@@ -96,7 +99,6 @@ def lockout():
                             sar=lockout_form.sar.data,
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
-        print(new_lockout.lockout_description)
 
         new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
                         line_description=lockout_line_form.line_description.data,
@@ -104,7 +106,7 @@ def lockout():
                         removal_position=lockout_line_form.removal_position.data,
                         lockout=new_lockout)
         db.session.add(new_lockout_line)
-        print(new_lockout_line.line_description)
+
         db.session.commit()
         return redirect(url_for('save_lockout'))
 
@@ -117,15 +119,28 @@ def this_lockout(this_lockout_id):
     lockout_lines=this_lockout.lockout
     if request.method=='POST':
         files = request.files['inputFile']
-        this_file=db.session.query(Lockout).first()
+        this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
         this_file.filename=filename=files.filename
         this_file.data=files.read()
         this_lockout.status=False
         db.session.commit()
+        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('index'))
+
     else:
         return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines)
 
+
+# For a given file, return whether it's an allowed type or not
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
+@app.route('/static/lockout/<filename>')
+def uploaded_file(filename):
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
 @app.route('/')
 def index():
