@@ -21,8 +21,6 @@ Bootstrap(app)
 from forms import *
 from models import *
 
-
-
 #------------------------------------------------------
 # login required decorator
 def login_required(f):
@@ -35,11 +33,11 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
-
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
     login_form=LoginForm()
     if login_form.validate_on_submit():
+        flash('Logged in as ')
         session['logged_in'] = True
         return redirect(url_for('index'))
     return render_template('login.html', login_form=login_form)
@@ -51,6 +49,21 @@ def register():
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop('logged_in', None)
+    flash('Successfully logged out')
+    return redirect(url_for('login'))
+
+@app.route('/')
+def index():
+    today=date.today()
+    user=db.session.query(User).first()
+    lockout=db.session.query(Lockout).all()
+    open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
+    closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
+    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
 
 
 @app.route('/upload', methods = ['GET','POST'])
@@ -150,24 +163,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
-@app.route('/')
-def index():
-    today=date.today()
-    user=db.session.query(User).first()
-    lockout=db.session.query(Lockout).all()
-    open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
-    closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
-    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
-
-
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run()

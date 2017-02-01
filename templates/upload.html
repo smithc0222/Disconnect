@@ -4,103 +4,92 @@
 
 <div class="container-fluid">
   <div class="jumbotron">
-      <div class="text-center">
-        <h1> Lockout Tagout </h1>
+    <div class="col-md-12" style="text-align: center; padding-bottom: 60px;">
+      <h1>  Lockout|Tagout </h1>
+    </div>
+    <div class="row" style="padding: 20px; font-size: 18px;">
+        <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.id }}</div>
+        <div class="col-lg-4">Developed By: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</div>
+        <div class="col-lg-4">Date: {{ this_lockout.date.strftime("%m/%d/%y") }}</div>
+    </div>
+    <div class="panel-group">
+      <div class="panel panel-info" style="margin-bottom: 25px;">
+        <div class="panel-heading">Lockout Description</div>
+        <div class="panel-body" style="font-size: 20px;">{{ this_lockout.lockout_description }}</div>
       </div>
-        <br>
-        <div class="row">
-          <div class="col-md-3 col-md-offset-3 form-group">
-            <h4> LOTO Number: {{ this_lockout.id }} </h4>
-          </div>
-          <div class="col-md-6 form-group">
-            <h4>Lockout Developed By: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
-          </div>
-          <div class="col-md-3 col-md-offset-3 form-group">
-            <h4>Date: {{ this_lockout.date }}</h4>
-          </div>
-          <div class="col-md-6 form-group">
-            <h4>Workorder Number: ___________________</h4>
-          </div>
-        </div>
-      <br>
-      <div class="row">
-        <div class="col-md-12">
-          <h4>Lockout Description: <u>{{ this_lockout.lockout_description }}</u></h4>
+      <div class="panel panel-warning" style="margin-bottom: 25px;">
+        <div class="panel-heading">PPE Required:</div>
+        <div class="panel-body" style="font-size: 20px;">
+          <ul style="list-style: none;">
+            {% if this_lockout.goggles == True %}
+              <li>Goggles</li>
+            {% endif %}
+            {% if this_lockout.faceshield == True %}
+              <li>Face Shield</li>
+            {% endif %}
+            {% if this_lockout.fullface == True %}
+              <li>Full Face Respirator</li>
+            {% endif %}
+            {% if this_lockout.dustmask == True %}
+              <li>Dust Mask</li>
+            {% endif %}
+            {% if this_lockout.leathergloves == True %}
+              <li>Leather Gloves</li>
+            {% endif %}
+            {% if this_lockout.saranax == True %}
+              <li>Saranax Suit</li>
+            {% endif %}
+            {% if this_lockout.ppe != None %}
+              <li>{{ this_lockout.ppe }}</li>
+              {% endif %}
+          </ul>
         </div>
       </div>
-          <br>
-          <h4> PPE Required: </h4>
-
-            <div class="col-md-6 form-group">
-              <ul>
-                {% if this_lockout.goggles == True %}
-                  <li>Goggles</li>
-                {% endif %}
-                {% if this_lockout.faceshield == True %}
-                  <li>Face Shield</li>
-                {% endif %}
-                {% if this_lockout.fullface == True %}
-                  <li>Full Face Respirator</li>
-                {% endif %}
-                {% if this_lockout.dustmask == True %}
-                  <li>Dust Mask</li>
-                {% endif %}
-                {% if this_lockout.leathergloves == True %}
-                  <li>Leather Gloves</li>
-                {% endif %}
-                {% if this_lockout.saranax == True %}
-                  <li>Saranax Suit</li>
-                {% endif %}
-              </ul>
-            </div>
-          <div class="row">
-            <div class="col-xs-md form-group">
-              <h4>Other PPE:<u>{{ this_lockout.ppe }}</u></h4>
-            </div>
-          </div>
-    <br>
 
   <!-- Table -->
-  <div class="container">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Valve # / MCC #</th>
-          <th>Item Description / Location</th>
-          <th>Lock Position</th>
-          <th>Lock #</th>
-          <th>Try Out</th>
-          <th>Removal Position</th>
-          <th>Lock/Tag Removed</th>
-        </tr>
-      </thead>
-      <tbody>
-    {% for each in lockout_lines %}
-        <tr>
-          <th scope="row">{{ each.valve_number}}</th>
-            <td>{{ each.line_description }}</td>
-            <td>{{ each.lock_position }}</td>
-            <td></td>
-            <td></td>
-            <td>{{ each.removal_position }}</td>
-            <td></td>
-        </tr>
-    {% endfor %}
-      </tbody>
-    </table>
-  </div>
-<hr>
-
-  <form method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}">
-    <div class="form-group">
-      <label for="attach">Attach File and Close:</label>
-      <input id="attach" type="file" class="file" name="file">
-      <br>
-      <button  type="submit" class="btn btn-danger">Submit</button>
-    </div>
-  </form>
-  <hr>
-    <a class="btn btn-warning btn-lg btn-block" href="/static/lockout/{{this_lockout.filename}}" download="{{this_lockout.filename}}">Download Saved PDF</a>
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr style="background-color: #A2FBA2;">
+              <th>Valve # / MCC #</th>
+              <th>Item Description / Location</th>
+              <th>Lock Position</th>
+              <th>Lock #</th>
+              <th>Try Out</th>
+              <th>Removal Position</th>
+              <th>Lock/Tag Removed</th>
+            </tr>
+          </thead>
+          <tbody style="padding-bottom: 15px;">
+        {% for each in lockout_lines %}
+            <tr style="border-bottom: inset;">
+              <th scope="row">{{ each.valve_number}}</th>
+                <td>{{ each.line_description }}</td>
+                <td>{{ each.lock_position }}</td>
+                <td></td>
+                <td></td>
+                <td>{{ each.removal_position }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      </div>
+      <div class="panel" style="margin-bottom: 25px;">
+        <div class="panel-body">
+          <form class="form-inline" method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}">
+            <div class="form-group mx-sm-12">
+              <input type="file" class="form-control mb-2 mr-sm-2 mb-sm-0" name="file" class="file" id="attach" placeholder="Attach File">
+              <button type="submit" class="btn btn-danger">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div style="padding-top: 40px;">
+        <a class="btn btn-warning btn-lg btn-block" href="/static/lockout/{{this_lockout.filename}}" download="{{this_lockout.filename}}">Download Saved PDF</a>
+      </div>
   </div>
 </div>
 
