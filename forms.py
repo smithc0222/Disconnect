@@ -11,6 +11,7 @@ class LoginForm(Form):
     password = PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])
 
 class LockoutForm(Form):
+    lockout_number=StringField('LOTO Number', [validators.Length(min=3)])
     lockout_description=StringField('Description', [validators.Length(min=2, max=300)])
     goggles=BooleanField('Goggles')
     faceshield=BooleanField('Face Shield')

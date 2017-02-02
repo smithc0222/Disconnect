@@ -80,7 +80,7 @@ def lockout():
     user=db.session.query(User).first()
     lockout_form=LockoutForm(request.form)
     lockout_line_form=LockoutLineForm(request.form)
-    today=date.today()
+    today=datetime.today()
     user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1].id
@@ -89,7 +89,8 @@ def lockout():
 
     if request.method == 'POST':
 
-        new_lockout=Lockout(lockout_description=lockout_form.lockout_description.data,
+        new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
+                            lockout_description=lockout_form.lockout_description.data,
                             lockout_author=user,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
@@ -153,7 +154,7 @@ def uploaded_file(filename):
 
 @app.route('/')
 def index():
-    today=date.today()
+    today=datetime.today()
     user=db.session.query(User).first()
     open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
     closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()

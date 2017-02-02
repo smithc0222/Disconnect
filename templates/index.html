@@ -19,7 +19,7 @@
   <div class="panel-group">
     <div class="panel" style="margin-bottom: 25px;">
       <div class="panel-body">
-        <table class="table table-sm">
+        <table class="table table-sm table-responsive table-hover">
           <thead>
             <tr style="background-color: #A2FBA2;">
               <th>Lockout No:</th>
@@ -32,7 +32,7 @@
           <tbody>
             {% for each in open_lockouts %}
             <tr >
-              <th scope="row" ><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
+              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
               <td>{{ each.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
               {% if each.status == True %}
@@ -51,7 +51,7 @@
 <!-- CLOSE TABLE _____________________-->
   <div class="panel" style="margin-bottom: 25px;">
     <div class="panel-body">
-      <table class="table table-sm">
+      <table class="table table-sm table-responsive table-hover">
         <thead>
           <tr style="background-color: #FF9999;">
             <th>Lockout No:</th>
@@ -64,7 +64,7 @@
         <tbody>
           {% for each in closed_lockouts %}
           <tr>
-            <th scope="row"><a href="lockout/{{each.id}}">{{ each.id }}</a></th>
+            <th scope="row"><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
             <td>{{ each.lockout_description }}</td>
             <td>{{ each.date.strftime("%m/%d/%y") }}</td>
             {% if each.status == True %}

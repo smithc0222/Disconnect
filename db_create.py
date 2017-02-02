@@ -11,7 +11,7 @@ db.session.add(User(username='dlaflamme',first_name='Dave',last_name='LaFlamme',
 
 user1=db.session.query(User).first()
 db.session.commit()
-lockout1=Lockout(lockout_description='Test lockout', lockout_author=user1,
+lockout1=Lockout(lockout_number='02022017-1', lockout_description='Test lockout', lockout_author=user1,
                 goggles=0, faceshield=0, fullface=0, dustmask=0,
                 leathergloves=0, saranax=0, nitrilegloves=0,
                 chemicalsuit=0, chemicalgloves=0, tyrex=0,

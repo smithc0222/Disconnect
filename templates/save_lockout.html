@@ -8,17 +8,14 @@
     </div>
       <hr>
       <div class="row">
-        <div class="col-xs-3 col-xs-offset-3 form-group">
-          <h4> LOTO Number: {{ this_lockout.id }} </h4>
+        <div class="col-md-4">
+          <h4> LOTO Number: {{ this_lockout.lockout_number }} </h4>
         </div>
-        <div class="col-xs-6 form-group">
-          <h4>Lockout Developed By: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
+        <div class="col-md-4">
+          <h4>Developer: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
         </div>
-        <div class="col-xs-3 col-xs-offset-3 form-group">
+        <div class="col-md-4">
           <h4>Date: {{ this_lockout.date.strftime("%m/%d/%y") }}</h4>
-        </div>
-        <div class="col-xs-6 form-group">
-          <h4>Workorder Number: ___________________</h4>
         </div>
       </div>
     <br>

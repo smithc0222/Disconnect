@@ -1,5 +1,5 @@
 from app import db
-from datetime import datetime, date
+from datetime import datetime
 
 class User(db.Model):
 
@@ -25,6 +25,7 @@ class Lockout(db.Model):
 
     __tablename__="lockout"
     id=db.Column(db.Integer, primary_key=True)
+    lockout_number=db.Column(db.String(10), nullable=False)
     lockout_description=db.Column(db.String(200), nullable=False)
     lockout_author = db.relationship('User', backref=db.backref('lockout_author', lazy='dynamic'))
     user_id=db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
@@ -47,9 +48,10 @@ class Lockout(db.Model):
     ppe=db.Column(db.String(50), nullable=True)
 
 
-    def __init__(self, lockout_description, lockout_author, goggles, faceshield,
+    def __init__(self, lockout_number, lockout_description, lockout_author, goggles, faceshield,
         fullface, dustmask, leathergloves, saranax, nitrilegloves, chemicalsuit, chemicalgloves,
         tyrex, rubberboots, sar, ppe, date=None):
+        self.lockout_number=lockout_number
         self.lockout_description=lockout_description
         if date is None:
             date = datetime.utcnow()
@@ -70,7 +72,7 @@ class Lockout(db.Model):
         self.ppe=ppe
 
     def __repr__(self):
-        return 'Lockout: {}'.format(self.id)
+        return 'Lockout: {}'.format(self.lockout_number)
 
 class Lockout_Line(db.Model):
 
