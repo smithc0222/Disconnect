@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 #config
 import os
-app.config.from_object('config.TrinityDevConfig')
+app.config.from_object('config.PythonAnywhereConfig')
 
 #create sqlalchemy object
 db = SQLAlchemy(app)

@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 
 #create app object
@@ -14,6 +15,10 @@ app.config.from_object('config.PythonAnywhereConfig')
 #create sqlalchemy object
 db = SQLAlchemy(app)
 
+#login manager flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 #instantiate bootstrap
 Bootstrap(app)
 
@@ -21,25 +26,24 @@ from forms import *
 from models import *
 
 
-
 #------------------------------------------------------
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.query(User).get(user_id)
 # login required decorator
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
-
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
     login_form=LoginForm()
     if login_form.validate_on_submit():
-        session['logged_in'] = True
+        pass_username=login_form.username.data
+        print(pass_username)
+        user=db.session.query(User).filter_by(username=pass_username).first()
+        print(login_form.username.data)
+        print(user)
+        login_user(user)
+        #session['logged_in'] = True
+        flash('You were logged in')
         return redirect(url_for('index'))
     return render_template('login.html', login_form=login_form)
 
@@ -50,13 +54,25 @@ def register():
         return redirect(url_for('index'))
     return render_template('register.html', register_form=register_form)
 
+@app.route('/')
+@login_required
+def index():
+    today=datetime.today()
+    #user=db.session.query(User).first()
+    user=db.session.query(User).filter_by(username=current_user.username).first()
+    print(current_user.username)
+    open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
+    closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
+    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
 
 @app.route('/upload', methods = ['GET','POST'])
+@login_required
 def upload():
     return render_template('upload.html')
 
 
 @app.route('/save_lockout', methods=['POST', 'GET'])
+@login_required
 def save_lockout():
     all_lockout=db.session.query(Lockout).all()
     this_lockout=all_lockout[-1]
@@ -77,11 +93,11 @@ def save_lockout():
 
 @app.route('/lockout', methods=['POST', 'GET'])
 def lockout():
-    user=db.session.query(User).first()
+    user=db.session.query(User).filter_by(username=current_user.username).first()
     lockout_form=LockoutForm(request.form)
     lockout_line_form=LockoutLineForm(request.form)
     today=datetime.today()
-    user=db.session.query(User).first()
+    #user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1].id
     next_lockout=last_lockout+1
@@ -152,18 +168,10 @@ def uploaded_file(filename):
 
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/')
-def index():
-    today=datetime.today()
-    user=db.session.query(User).first()
-    open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
-    closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
-    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
-
-
 @app.route('/logout')
 @login_required
 def logout():
+    logout_user()
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('login'))
