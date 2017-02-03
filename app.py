@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_from_directory
-from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -10,7 +9,7 @@ app = Flask(__name__)
 
 #config
 import os
-app.config.from_object('config.PythonAnywhereConfig')
+app.config.from_object('config.TrinityDevelopmentConfig')
 
 #create sqlalchemy object
 db = SQLAlchemy(app)
@@ -18,7 +17,7 @@ db = SQLAlchemy(app)
 #login manager flask-login
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+login_manager.login_view='login'
 #instantiate bootstrap
 Bootstrap(app)
 
@@ -42,7 +41,6 @@ def login():
         print(login_form.username.data)
         print(user)
         login_user(user)
-        #session['logged_in'] = True
         flash('You were logged in')
         return redirect(url_for('index'))
     return render_template('login.html', login_form=login_form)
@@ -55,9 +53,9 @@ def register():
     return render_template('register.html', register_form=register_form)
 
 @app.route('/')
+@login_required
 def index():
     today=datetime.today()
-    #user=db.session.query(User).first()
     user=db.session.query(User).filter_by(username=current_user.username).first()
     print(current_user.username)
     open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
@@ -91,12 +89,12 @@ def save_lockout():
 
 
 @app.route('/lockout', methods=['POST', 'GET'])
+@login_required
 def lockout():
     user=db.session.query(User).filter_by(username=current_user.username).first()
     lockout_form=LockoutForm(request.form)
     lockout_line_form=LockoutLineForm(request.form)
     today=datetime.today()
-    #user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1].id
     next_lockout=last_lockout+1
@@ -136,6 +134,7 @@ def lockout():
         return render_template('lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
 
 @app.route('/lockout/<int:this_lockout_id>', methods=['POST', 'GET'])
+@login_required
 def this_lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
@@ -163,6 +162,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 @app.route('/static/lockout/<filename>')
+@login_required
 def uploaded_file(filename):
 
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
