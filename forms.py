@@ -7,11 +7,11 @@ class RegisterForm(Form):
 
 
 class LoginForm(Form):
-    username=StringField('Username', [validators.Length(min=6, max=35)])
+    username=StringField('Username', [validators.Length(min=6, max=35), validators.AnyOf(message='Try again', values=['csmith', 'dlaflamme','bfurby'])])
     password = PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])
 
 class LockoutForm(Form):
-    lockout_number=StringField('LOTO Number', [validators.Length(min=3)])
+    lockout_number=StringField('LOTO Number:', [validators.Length(min=3)])
     lockout_description=StringField('Description', [validators.Length(min=2, max=300)])
     goggles=BooleanField('Goggles')
     faceshield=BooleanField('Face Shield')
@@ -25,7 +25,7 @@ class LockoutForm(Form):
     tyrex=BooleanField('Tyrex Suit')
     rubberboots=BooleanField('Rubber Boots')
     sar=BooleanField('SAR')
-    ppe=StringField('Other PPE:')
+    ppe=StringField('Other PPE:', [validators.Length(max=50)])
 
 class LockoutLineForm(Form):
     valve_number=StringField(u'',[validators.Length(max=10)])

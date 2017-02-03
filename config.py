@@ -10,3 +10,5 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
 class PythonAnywhereConfig(BaseConfig):
     UPLOAD_FOLDER='/home/chasesmith/mysite/lockout/static/lockout'
+class TrinityDevConfig(BaseConfig):
+    UPLOAD_FOLDER='C:/users/csmith/desktop/trinitylockout/static/lockout'

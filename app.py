@@ -1,9 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, send_from_directory
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_from_directory
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from werkzeug.utils import secure_filename
-from io import BytesIO
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 
 #create app object
@@ -11,67 +10,68 @@ app = Flask(__name__)
 
 #config
 import os
-app.config.from_object('config.DevelopmentConfig')
+app.config.from_object('config.TrinityDevConfig')
 
 #create sqlalchemy object
 db = SQLAlchemy(app)
 
+#login manager flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 #instantiate bootstrap
 Bootstrap(app)
+
 from forms import *
 from models import *
 
+
 #------------------------------------------------------
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.query(User).get(user_id)
 # login required decorator
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
     login_form=LoginForm()
     if login_form.validate_on_submit():
-        flash('Logged in as ')
-        session['logged_in'] = True
+        pass_username=login_form.username.data
+        print(pass_username)
+        user=db.session.query(User).filter_by(username=pass_username).first()
+        print(login_form.username.data)
+        print(user)
+        login_user(user)
+        #session['logged_in'] = True
+        flash('You were logged in')
         return redirect(url_for('index'))
     return render_template('login.html', login_form=login_form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    form=RegisterForm()
-    if form.validate_on_submit():
+    register_form=RegisterForm()
+    if register_form.validate_on_submit():
         return redirect(url_for('index'))
-    return render_template('register.html', form=form)
-
-@app.route('/logout')
-@login_required
-def logout():
-    session.pop('logged_in', None)
-    flash('Successfully logged out')
-    return redirect(url_for('login'))
+    return render_template('register.html', register_form=register_form)
 
 @app.route('/')
 def index():
-    today=date.today()
-    user=db.session.query(User).first()
-    lockout=db.session.query(Lockout).all()
+    today=datetime.today()
+    #user=db.session.query(User).first()
+    user=db.session.query(User).filter_by(username=current_user.username).first()
+    print(current_user.username)
     open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
     closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
     return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
 
-
 @app.route('/upload', methods = ['GET','POST'])
+@login_required
 def upload():
     return render_template('upload.html')
 
 
 @app.route('/save_lockout', methods=['POST', 'GET'])
+@login_required
 def save_lockout():
     all_lockout=db.session.query(Lockout).all()
     this_lockout=all_lockout[-1]
@@ -92,11 +92,11 @@ def save_lockout():
 
 @app.route('/lockout', methods=['POST', 'GET'])
 def lockout():
-    user=db.session.query(User).first()
+    user=db.session.query(User).filter_by(username=current_user.username).first()
     lockout_form=LockoutForm(request.form)
     lockout_line_form=LockoutLineForm(request.form)
-    today=date.today()
-    user=db.session.query(User).first()
+    today=datetime.today()
+    #user=db.session.query(User).first()
     lockout=db.session.query(Lockout).all()
     last_lockout=lockout[-1].id
     next_lockout=last_lockout+1
@@ -104,7 +104,8 @@ def lockout():
 
     if request.method == 'POST':
 
-        new_lockout=Lockout(lockout_description=lockout_form.lockout_description.data,
+        new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
+                            lockout_description=lockout_form.lockout_description.data,
                             lockout_author=user,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
@@ -139,13 +140,17 @@ def this_lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
     if request.method=='POST':
-        files = request.files['inputFile']
+        files = request.files['file']
+        filename=files.filename
+        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
         this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
-        this_file.filename=filename=files.filename
+        this_file.filename=files.filename
         this_file.data=files.read()
         this_lockout.status=False
         db.session.commit()
-        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
         return redirect(url_for('index'))
 
     else:
@@ -160,9 +165,15 @@ def allowed_file(filename):
 @app.route('/static/lockout/<filename>')
 def uploaded_file(filename):
 
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    session.pop('logged_in', None)
+    flash('You were logged out')
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run()

@@ -8,6 +8,7 @@ db.create_all()
 
 db.session.add(User(username='csmith',first_name='Chase',last_name='Smith',position='Dev'))
 db.session.add(User(username='dlaflamme',first_name='Dave',last_name='LaFlamme',position='Maintenance Manager'))
+db.session.add(User(username='bfurby', first_name='Belinda',last_name='Furby',position='Safety Manager'))
 
 user1=db.session.query(User).first()
 db.session.commit()

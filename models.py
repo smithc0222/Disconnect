@@ -1,7 +1,9 @@
 from app import db
 from datetime import datetime
+from flask_login import UserMixin
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
 
     __tablename__="user"
     id=db.Column(db.Integer, primary_key=True)
@@ -19,7 +21,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.username)
-
 
 class Lockout(db.Model):
 
