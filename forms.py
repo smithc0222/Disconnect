@@ -7,7 +7,7 @@ class RegisterForm(Form):
 
 
 class LoginForm(Form):
-    username=StringField('Username', [validators.Length(min=6, max=35), validators.AnyOf(message='Try again', values=['csmith', 'dlaflamme','bfurby'])])
+    username=StringField('Username', [validators.Length(min=6, max=35), validators.AnyOf(message='Try again', values=['cedmunds','csmith', 'dlaflamme','bfurby'])])
     password = PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])
 
 class LockoutForm(Form):
