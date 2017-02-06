@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="text-center">
+      <h1>Lockout|Tagout</h1>
+    </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-4">
+          <h4> LOTO Number: {{ this_lockout.lockout_number }} </h4>
+        </div>
+        <div class="col-md-4">
+          <h4>Developer: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
+        </div>
+        <div class="col-md-4">
+          <h4>Date: {{ this_lockout.date.strftime("%m/%d/%y") }}</h4>
+        </div>
+      </div>
+    <br>
+    <div class="row">
+      <div class="col-xs-12">
+        <h4>Lockout Description: <u>{{ this_lockout.lockout_description }}</u></h4>
+      </div>
+    </div>
+
+  <!-- Table -->
+
+      <table class="table" id="lines_table">
+        <thead>
+          <tr>
+            <th>Valve # / MCC #</th>
+            <th>Item Description / Location</th>
+            <th>Lock Position</th>
+            <th>Removal Position</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for each in lockout_lines %}
+              <tr>
+                <th scope="row">{{ each.valve_number}}</th>
+                  <td>{{ each.line_description }}</td>
+                  <td>{{ each.lock_position }}</td>
+                  <td>{{ each.removal_position }}</td>
+              </tr>
+          {% endfor %}
+        <form  method="POST" action="/save_lockout">
+          <tr>
+            <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
+              <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
+              <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
+              <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
+          </tr>
+          <tr>
+            <th><button class="btn btn-primary" type="submit">Add Line</button></th>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <div class="container">
+      <hr>
+      <a class="btn btn-success btn-lg btn-block" href="/" role="button">Save and Close</a>
+    </diV>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
