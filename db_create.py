@@ -1,7 +1,7 @@
 #create db and populate with data.
 from app import db
-from models import *
-
+from app.auth.models import User
+from app.lockout.models import Lockout,Lockout_Line
 
 db.drop_all()
 db.create_all()
