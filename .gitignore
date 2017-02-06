@@ -21,8 +21,7 @@ pip-log.txt
 .coverage
 .tox
 
-#Translations
-*.mo
+
 
 #Mr Developer
 venv
