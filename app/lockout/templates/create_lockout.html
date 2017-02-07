@@ -55,24 +55,31 @@
               <th>Item Description / Location</th>
               <th>Lock Position</th>
               <th>Removal Position</th>
+              <th><button type="button" id="add_field_button" class="btn btn-primary">Add Field</button></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="lines_body">
             <tr>
               <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
                 <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
                 <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
                 <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
               </tr>
-              <hr>
-              <tr>
-                <th >
-                  <button class="btn btn-primary btn-block" type="submit">Add Lockout Line</button>
-                </th>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
+              <script type="text/javascript">
+              $(document).ready(function() {
+                var wrapper = $("#lines_body");
+                var add_button = $("#add_field_button");
+                $(add_button).click(function(e){
+                e.preventDefault(); //on add input button click
+                $(wrapper).append('<tr>' +
+                  '<th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>'+
+                    '<td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>'+
+                    '<td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>'+
+                    '<td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>'+
+                    '</tr>');
+                  });
+                  });
+              </script>
             </tbody>
           </table>
         <hr>
