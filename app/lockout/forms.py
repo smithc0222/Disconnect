@@ -23,3 +23,7 @@ class LockoutLineForm(Form):
     line_description=StringField(u'',[validators.Length(max=50)])
     lock_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
     removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
+
+class AcceptedForm(Form):
+        accepted_by=StringField('Username')
+        password=PasswordField('Password', [validators.AnyOf(message='Wrong Password. Maybe a secret', values=['secret', 'password', 'admin'])])

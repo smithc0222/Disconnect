@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory
-from app.lockout.forms import LockoutForm, LockoutLineForm
+from app.lockout.forms import LockoutForm, LockoutLineForm, AcceptedForm
 from app.lockout.models import Lockout, Lockout_Line
 from app.auth.models import User
 from datetime import datetime
@@ -19,10 +19,11 @@ from app.auth.controllers import load_user
 def index():
     today=datetime.today()
     user=db.session.query(User).filter_by(username=current_user.username).first()
-    print(current_user.username)
-    open_lockouts=db.session.query(Lockout).filter_by(status=True).all()
-    closed_lockouts=db.session.query(Lockout).filter_by(status=False).all()
-    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, user=user, today=today)
+    open_lockouts=db.session.query(Lockout).filter_by(open_status=True).all()
+    implemented_lockouts=db.session.query(Lockout).filter_by(implemented_status=True, accepted_status=False).all()
+    accepted_lockouts=db.session.query(Lockout).filter_by(accepted_status=True).all()
+    closed_lockouts=db.session.query(Lockout).filter_by(close_status=True).all()
+    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts, implemented_lockouts=implemented_lockouts, user=user, today=today)
 
 @mod.route('/upload', methods = ['GET','POST'])
 @login_required
@@ -50,9 +51,9 @@ def save_lockout():
         return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines)
 
 
-@mod.route('/lockout', methods=['POST', 'GET'])
+@mod.route('/create_lockout', methods=['POST', 'GET'])
 @login_required
-def lockout():
+def create_lockout():
     user=db.session.query(User).filter_by(username=current_user.username).first()
     lockout_form=LockoutForm(request.form)
     lockout_line_form=LockoutLineForm(request.form)
@@ -61,9 +62,7 @@ def lockout():
     last_lockout=lockout[-1].id
     next_lockout=last_lockout+1
 
-
     if request.method == 'POST':
-
         new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
                             lockout_description=lockout_form.lockout_description.data,
                             lockout_author=user,
@@ -93,27 +92,62 @@ def lockout():
         return redirect(url_for('lockout.save_lockout'))
 
     else:
-        return render_template('lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
+        return render_template('create_lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
 
-@mod.route('/lockout/<int:this_lockout_id>', methods=['POST', 'GET'])
+@mod.route('/lockout/<int:this_lockout_id>/implement', methods=['POST', 'GET'])
 @login_required
-def this_lockout(this_lockout_id):
+def implement_lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    if request.method=='POST':
-        files = request.files['file']
-        filename=files.filename
-        files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
-        this_file.filename=files.filename
-        this_file.data=files.read()
-        this_lockout.status=False
+    accepted_form=AcceptedForm(request.form)
+    if accepted_form.validate_on_submit():
+        this_lockout.implemented_by=current_user
+        this_lockout.open_status=False
+        this_lockout.implemented_status=True
         db.session.commit()
-
-        return redirect(url_for('lockokut.index'))
-
+        return redirect(url_for('lockout.index'))
     else:
-        return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines)
+        return render_template('implemented_by.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
+
+@mod.route('/lockout/<int:this_lockout_id>/accept', methods=['POST', 'GET'])
+@login_required
+def accept_lockout(this_lockout_id):
+    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
+    lockout_lines=this_lockout.lockout
+    accepted_form=AcceptedForm(request.form)
+    if accepted_form.validate_on_submit():
+        this_lockout.accepted_by=current_user
+        this_lockout.accepted_status=True
+        db.session.commit()
+        return redirect(url_for('lockout.index'))
+    else:
+        return render_template('accepted_by.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
+
+@mod.route('/lockout/<int:this_lockout_id>/close', methods=['POST', 'GET'])
+@login_required
+def close_lockout(this_lockout_id):
+    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
+    lockout_lines=this_lockout.lockout
+    accepted_form=AcceptedForm(request.form)
+    if accepted_form.validate_on_submit():
+        this_lockout.closed_by=current_user
+        this_lockout.open_status=False
+        this_lockout.implemented_status=True
+    #    files = request.files['file']
+    #    filename=files.filename
+    #    files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    #    this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
+    #    this_file.filename=files.filename
+    #    this_file.data=files.read()
+        this_lockout.open_status=False
+        this_lockout.implemented_status=False
+        this_lockout.accepted_status=False
+        this_lockout.work_status=True
+        this_lockout.close_status=True
+        db.session.commit()
+        return redirect(url_for('lockout.index'))
+    else:
+        return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
 
 
 # For a given file, return whether it's an allowed type or not

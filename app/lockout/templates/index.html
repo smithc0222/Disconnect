@@ -2,46 +2,72 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
-      {% for message in get_flashed_messages() %}
-        {% if message == 'Logged in as ' %}
-          <h3 class=flashes>{{ message }} {{ user.first_name }} {{ user.last_name }} </h3>
-        {% endif %}
-      {% endfor %}
-    </div>
+  <div class="col-md-12">
+    {% for message in get_flashed_messages() %}
+      {% if message == 'Logged in as ' %}
+        <h3 class=flashes>{{ message }} {{ user.first_name }} {{ user.last_name }} </h3>
+      {% endif %}
+    {% endfor %}
   </div>
-  <div class="jumbotron">
-    <div class="text-center" style="padding-bottom: 40px;">
-      <h1>Lockout|Tagout</h1>
-    </div>
-
+</div>
+<div class="jumbotron">
+  <div class="text-center" style="padding-bottom: 40px;">
+    <h1>Lockout|Tagout</h1>
+  </div>
 <!-- OPEN TABLE --------------------------------------------->
   <div class="panel-group">
     <div class="panel" style="margin-bottom: 25px;">
-      <div class="panel-body">
-        <div style="overflow-x:auto;">
+      <div class="panel-heading">
+        Open
+      </div>
+        <div class="panel-body">
+          <div style="overflow-x:auto;">
             <table class="table table-sm table-responsive table-hover">
               <thead>
                 <tr style="background-color: #A2FBA2;">
                   <th>Lockout No:</th>
                   <th>Lockout Description</th>
                   <th>Date</th>
-                  <th>Status</th>
                   <th>Author</th>
                 </tr>
               </thead>
               <tbody>
                 {% for each in open_lockouts %}
                 <tr >
-                  <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                  <th scope="row" class="" ><a href="lockout/{{each.id}}/implement">{{ each.lockout_number }}</a></th>
                   <td>{{ each.lockout_description }}</td>
                   <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                  {% if each.status == True %}
-                  <td>Open</td>
-                  {% else %}
-                  <td>Closed</td>
-                  {% endif %}
                   <td>{{ each.lockout_author.last_name }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+<!-- Implement TABLE --------------------------------------------->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-heading">
+        Implemented
+      </div>
+      <div class="panel-body">
+        <div style="overflow-x:auto;">
+            <table class="table table-sm table-responsive table-hover">
+              <thead>
+                <tr style="background-color: #FF9A12;">
+                  <th>Lockout No:</th>
+                  <th>Lockout Description</th>
+                  <th>Date</th>
+                  <th>Implementer</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for each in implemented_lockouts %}
+                <tr >
+                  <th scope="row" class="" ><a href="lockout/{{each.id}}/accept">{{ each.lockout_number }}</a></th>
+                  <td>{{ each.lockout_description }}</td>
+                  <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                  <td>{{ each.implemented_by.last_name }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -49,41 +75,67 @@
         </div>
       </div>
     </div>
-
-<!-- CLOSE TABLE _____________________-->
-  <div class="panel" style="margin-bottom: 25px;">
-    <div class="panel-body">
-        <div style="overflow-x:auto;">
-          <table class="table table-sm table-responsive table-hover">
-            <thead>
-              <tr style="background-color: #FF9999;">
-                <th>Lockout No:</th>
-                <th>Lockout Description</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Author</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for each in closed_lockouts %}
-              <tr>
-                <th scope="row"><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
-                <td>{{ each.lockout_description }}</td>
-                <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                {% if each.status == True %}
-                <td>Open</td>
-                {% else %}
-                <td>Closed</td>
-                {% endif %}
-                <td>{{ each.lockout_author.last_name }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+  <!-- Accepted TABLE --------------------------------------------->
+      <div class="panel" style="margin-bottom: 25px;">
+        <div class="panel-heading">
+          Accepted
+        </div>
+        <div class="panel-body">
+          <div style="overflow-x:auto;">
+            <table class="table table-sm table-responsive table-hover">
+              <thead>
+                <tr style="background-color: #FFFF4D;">
+                  <th>Lockout No:</th>
+                  <th>Lockout Description</th>
+                  <th>Date</th>
+                  <th>Accepter</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for each in accepted_lockouts %}
+                <tr >
+                  <th scope="row" class="" ><a href="lockout/{{each.id}}/close">{{ each.lockout_number }}</a></th>
+                  <td>{{ each.lockout_description }}</td>
+                  <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                  <td>{{ each.accepted_by.last_name }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-</div>
+<!-- CLOSE TABLE _____________________-->
+        <div class="panel" style="margin-bottom: 25px;">
+          <div class="panel-heading">
+            Closed
+          </div>
+            <div class="panel-body">
+              <div style="overflow-x:auto;">
+                <table class="table table-sm table-responsive table-hover">
+                  <thead>
+                    <tr style="background-color: #FF9999;">
+                      <th>Lockout No:</th>
+                      <th>Lockout Description</th>
+                      <th>Date</th>
+                      <th>Author</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for each in closed_lockouts %}
+                    <tr>
+                      <th scope="row"><a href="lockout/{{each.id}}/{{each.lockout_status}}">{{ each.lockout_number }}</a></th>
+                      <td>{{ each.lockout_description }}</td>
+                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                      <td>{{ each.closed_by.last_name }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
 {% endblock %}
