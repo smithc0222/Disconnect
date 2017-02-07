@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="col-md-12" style="text-align: center; padding-bottom: 60px;">
+      <h1>  Lockout|Tagout </h1>
+    </div>
+    <div class="row" style="padding: 20px; font-size: 18px;">
+        <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.lockout_number }}</div>
+        <div class="col-lg-4">Developed By: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</div>
+        <div class="col-lg-4">Date: {{ this_lockout.date.strftime("%m/%d/%y") }}</div>
+    </div>
+    <div class="panel-group">
+      <div class="panel panel-info" style="margin-bottom: 25px;">
+        <div class="panel-heading">Lockout Description</div>
+        <div class="panel-body" style="font-size: 20px;">{{ this_lockout.lockout_description }}</div>
+      </div>
+      <div class="panel panel-warning" style="margin-bottom: 25px;">
+        <div class="panel-heading">PPE Required:</div>
+        <div class="panel-body" style="font-size: 20px;">
+          <ul style="list-style: none;">
+            {% if this_lockout.goggles == True %}
+              <li>Goggles</li>
+            {% endif %}
+            {% if this_lockout.faceshield == True %}
+              <li>Face Shield</li>
+            {% endif %}
+            {% if this_lockout.fullface == True %}
+              <li>Full Face Respirator</li>
+            {% endif %}
+            {% if this_lockout.dustmask == True %}
+              <li>Dust Mask</li>
+            {% endif %}
+            {% if this_lockout.leathergloves == True %}
+              <li>Leather Gloves</li>
+            {% endif %}
+            {% if this_lockout.saranax == True %}
+              <li>Saranax Suit</li>
+            {% endif %}
+            {% if this_lockout.ppe != None %}
+              <li>{{ this_lockout.ppe }}</li>
+              {% endif %}
+          </ul>
+        </div>
+      </div>
+
+  <!-- Table -->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr style="background-color: #A2FBA2;">
+              <th>Valve # / MCC #</th>
+              <th>Item Description / Location</th>
+              <th>Lock Position</th>
+              <th>Lock #</th>
+              <th>Try Out</th>
+              <th>Removal Position</th>
+              <th>Lock/Tag Removed</th>
+            </tr>
+          </thead>
+          <tbody style="padding-bottom: 15px;">
+        {% for each in lockout_lines %}
+            <tr style="border-bottom: inset;">
+              <th scope="row">{{ each.valve_number}}</th>
+                <td>{{ each.line_description }}</td>
+                <td>{{ each.lock_position }}</td>
+                <td></td>
+                <td></td>
+                <td>{{ each.removal_position }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-body">
+        <form method="POST" action="/lockout/{{this_lockout.id}}/released">
+          <dl>
+            {{ wtf.quick_form(accepted_form) }}
+            <input class="btn btn-success" type="submit" value="Release">
+          </dl>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

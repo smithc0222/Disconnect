@@ -19,37 +19,15 @@ from app.auth.controllers import load_user
 def index():
     today=datetime.today()
     user=db.session.query(User).filter_by(username=current_user.username).first()
-    open_lockouts=db.session.query(Lockout).filter_by(open_status=True).all()
+    open_lockouts=db.session.query(Lockout).filter_by(open_status=True, implemented_status=False).all()
     implemented_lockouts=db.session.query(Lockout).filter_by(implemented_status=True, accepted_status=False).all()
-    accepted_lockouts=db.session.query(Lockout).filter_by(accepted_status=True).all()
-    closed_lockouts=db.session.query(Lockout).filter_by(close_status=True).all()
-    return render_template('index.html', closed_lockouts=closed_lockouts, open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts, implemented_lockouts=implemented_lockouts, user=user, today=today)
-
-@mod.route('/upload', methods = ['GET','POST'])
-@login_required
-def upload():
-    return render_template('upload.html')
-
-
-@mod.route('/save_lockout', methods=['POST', 'GET'])
-@login_required
-def save_lockout():
-    all_lockout=db.session.query(Lockout).all()
-    this_lockout=all_lockout[-1]
-    lockout_line_form=LockoutLineForm(request.form)
-    lockout_lines=this_lockout.lockout
-    if request.method == 'POST':
-        new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
-                        line_description=lockout_line_form.line_description.data,
-                        lock_position=lockout_line_form.lock_position.data,
-                        removal_position=lockout_line_form.removal_position.data,
-                        lockout=this_lockout)
-        db.session.add(new_lockout_line)
-        db.session.commit()
-        return redirect(url_for('lockout.save_lockout'))
-    else:
-        return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines)
-
+    accepted_lockouts=db.session.query(Lockout).filter_by(accepted_status=True, released_status=False).all()
+    released_lockouts=db.session.query(Lockout).filter_by(released_status=True, closed_status=False).all()
+    closed_lockouts=db.session.query(Lockout).filter_by(closed_status=True).all()
+    return render_template('index.html', closed_lockouts=closed_lockouts,
+                            open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
+                            implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
+                            user=user, today=today)
 
 @mod.route('/create_lockout', methods=['POST', 'GET'])
 @login_required
@@ -94,6 +72,25 @@ def create_lockout():
     else:
         return render_template('create_lockout.html', lockout=lockout, user=user, today=today, next_lockout=next_lockout, lockout_form=lockout_form, lockout_line_form=lockout_line_form)
 
+@mod.route('/save_lockout', methods=['POST', 'GET'])
+@login_required
+def save_lockout():
+    all_lockout=db.session.query(Lockout).all()
+    this_lockout=all_lockout[-1]
+    lockout_line_form=LockoutLineForm(request.form)
+    lockout_lines=this_lockout.lockout
+    if request.method == 'POST':
+        new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
+                        line_description=lockout_line_form.line_description.data,
+                        lock_position=lockout_line_form.lock_position.data,
+                        removal_position=lockout_line_form.removal_position.data,
+                        lockout=this_lockout)
+        db.session.add(new_lockout_line)
+        db.session.commit()
+        return redirect(url_for('lockout.save_lockout'))
+    else:
+        return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines)
+
 @mod.route('/lockout/<int:this_lockout_id>/implement', methods=['POST', 'GET'])
 @login_required
 def implement_lockout(this_lockout_id):
@@ -102,7 +99,6 @@ def implement_lockout(this_lockout_id):
     accepted_form=AcceptedForm(request.form)
     if accepted_form.validate_on_submit():
         this_lockout.implemented_by=current_user
-        this_lockout.open_status=False
         this_lockout.implemented_status=True
         db.session.commit()
         return redirect(url_for('lockout.index'))
@@ -123,6 +119,19 @@ def accept_lockout(this_lockout_id):
     else:
         return render_template('accepted_by.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
 
+@mod.route('/lockout/<int:this_lockout_id>/released', methods=['POST','GET'])
+@login_required
+def released_lockout(this_lockout_id):
+    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
+    lockout_lines=this_lockout.lockout
+    accepted_form=AcceptedForm(request.form)
+    if accepted_form.validate_on_submit():
+        this_lockout.released_by.current_user
+        this_lockout.work_status=True
+        this_lockout.released_status=True
+        return redirect(url_for('lockout.index'))
+    return render_template('released_by.html',this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
+
 @mod.route('/lockout/<int:this_lockout_id>/close', methods=['POST', 'GET'])
 @login_required
 def close_lockout(this_lockout_id):
@@ -131,24 +140,22 @@ def close_lockout(this_lockout_id):
     accepted_form=AcceptedForm(request.form)
     if accepted_form.validate_on_submit():
         this_lockout.closed_by=current_user
-        this_lockout.open_status=False
-        this_lockout.implemented_status=True
     #    files = request.files['file']
     #    filename=files.filename
     #    files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     #    this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
     #    this_file.filename=files.filename
     #    this_file.data=files.read()
-        this_lockout.open_status=False
-        this_lockout.implemented_status=False
-        this_lockout.accepted_status=False
-        this_lockout.work_status=True
         this_lockout.close_status=True
         db.session.commit()
         return redirect(url_for('lockout.index'))
     else:
         return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
 
+@mod.route('/upload', methods = ['GET','POST'])
+@login_required
+def upload():
+    return render_template('upload.html')
 
 # For a given file, return whether it's an allowed type or not
 def allowed_file(filename):
