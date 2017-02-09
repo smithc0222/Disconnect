@@ -170,7 +170,7 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@mod.route('/lockout/<int:this_lockout_id>/downloadpdf')
+@mod.route('/lockout/<int:this_lockout_id>/pdf')
 @login_required
 def pdf_template(this_lockout_id):
     path_wkthmltopdf = r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
@@ -178,7 +178,7 @@ def pdf_template(this_lockout_id):
 
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    rendered=render_template('downloadpdf.html', this_lockout=this_lockout, this_lockout_id=this_lockout_id)
+    rendered=render_template('pdf.html', this_lockout=this_lockout, lockout_lines=lockout_lines)
     pdf = pdfkit.from_string(rendered, False,  configuration=pdf_config)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
