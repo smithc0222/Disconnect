@@ -1,7 +1,7 @@
 #default config
-import os
+import os, pdfkit
 class BaseConfig(object):
-    DEBUG = False
+    DEBUG = True
     SECRET_KEY='xf9xa6Xbx9xecyxae0>z%xf2m'
     SQLALCHEMY_DATABASE_URI='sqlite:///lockout.db'
     UPLOAD_FOLDER = '/home/chasesmith/mysite/lockout/static/uploads'

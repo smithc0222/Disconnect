@@ -1,4 +1,5 @@
-from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory
+from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory, make_response
+import pdfkit
 from app.lockout.forms import LockoutForm, LockoutLineForm, AcceptedForm
 from app.lockout.models import Lockout, Lockout_Line
 from app.auth.models import User
@@ -167,3 +168,20 @@ def allowed_file(filename):
 def uploaded_file(filename):
 
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@mod.route('/lockout/<int:this_lockout_id>/downloadpdf')
+@login_required
+def pdf_template(this_lockout_id):
+    path_wkthmltopdf = r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
+    pdf_config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
+
+    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
+    lockout_lines=this_lockout.lockout
+    rendered=render_template('downloadpdf.html', this_lockout=this_lockout, this_lockout_id=this_lockout_id)
+    pdf = pdfkit.from_string(rendered, False,  configuration=pdf_config)
+    response=make_response(pdf)
+    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Disposition']='inline; filename={{this_lockout.lockout_number}}.pdf'
+
+    return response

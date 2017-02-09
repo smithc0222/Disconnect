@@ -81,28 +81,8 @@
       <div class="panel-body">
         <p>Implemented by: {{this_lockout.implemented_by.last_name}}</p>
         <p>Accepted by: {{this_lockout.accepted_by.last_name}}</p>
+        <p>Released by: {{this_lockout.released_by.last_name}}</p>
       </div>
-    </div>
-    <div class="panel" style="margin-bottom: 25px;">
-      <div class="panel-body">
-        <form method="POST" action="/lockout/{{this_lockout.id}}/close">
-          <dl>
-            {{ wtf.quick_form(accepted_form) }}
-            <input class="btn btn-success" type="submit" value="Clear">
-          </dl>
-        </form>
-<!-- <form class="form-inline" method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}/close">
-        <div class="form-group mx-sm-12">
-          <label>Cleared By:</label>
-          <input type="text" class="form-control" name="cleared_by" placeholder="username">
-          <input type="file" class="form-control mb-2 mr-sm-2 mb-sm-0" name="file" class="file" id="attach" placeholder="Attach File">
-          <button type="submit" class="btn btn-danger">Submit</button>
-        </div>
-      </form> -->
-    </div>
-    </div>
-    <div style="padding-top: 40px;">
-      <a class="btn btn-warning btn-lg btn-block" href="/lockout/{{this_lockout.id}}/downloadpdf" >Generate PDF</a>
     </div>
   </div>
 </div>
