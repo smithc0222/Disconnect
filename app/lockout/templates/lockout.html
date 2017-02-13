@@ -81,7 +81,7 @@
       <div class="panel-body">
         <form method="POST" action="/lockout/{{this_lockout.id}}">
           <dl>
-            {{ wtf.quick_form(chain_of_custody_form) }}
+            {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
             <input class="btn btn-success" type="submit" value="Submit">
           </dl>
         </form>
