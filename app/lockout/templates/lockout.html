@@ -1,84 +1,107 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
+
 <div class="container-fluid">
   <div class="jumbotron">
     <div class="col-md-12" style="text-align: center; padding-bottom: 60px;">
       <h1>  Lockout|Tagout </h1>
-      <hr>
     </div>
-    <div class="form-group">
-      <form  method="POST" action="/create_lockout">
-          {{ wtf.csrf_token }}
-        <div class="row" style="padding-top: 20px; font-size: 18px;">
-            <div class="form-inline col-sm-5">
-                <p style="margin-bottom: 6px;"> {{ wtf.form_field(lockout_form.lockout_number) }} </p>
-            </div>
-            <div class="col-sm-4">
-                <p>  Developer: {{user.first_name}} </p>
-            </div>
-            <div class="col-sm-3">
-                <p>  Date: {{today.strftime("%m/%d/%y")}} </p>
-            </div>
+    <div class="row" style="padding: 20px; font-size: 18px;">
+        <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.lockout_number }}</div>
+        <div class="col-lg-4">Developed By: {{ this_lockout.created_by.first_name }} {{ this_lockout.created_by.last_name }}</div>
+        <div class="col-lg-4">Date: {{ open_table.date.strftime("%m/%d/%y") }}</div>
+    </div>
+    <div class="panel-group">
+      <div class="panel panel-info" style="margin-bottom: 25px;">
+        <div class="panel-heading">Lockout Description</div>
+        <div class="panel-body" style="font-size: 20px;">{{ this_lockout.lockout_description }}</div>
+      </div>
+      <div class="panel panel-warning" style="margin-bottom: 25px;">
+        <div class="panel-heading">PPE Required:</div>
+        <div class="panel-body" style="font-size: 20px;">
+          <ul style="list-style: none;">
+            {% if this_lockout.goggles == True %}
+              <li>Goggles</li>
+            {% endif %}
+            {% if this_lockout.faceshield == True %}
+              <li>Face Shield</li>
+            {% endif %}
+            {% if this_lockout.fullface == True %}
+              <li>Full Face Respirator</li>
+            {% endif %}
+            {% if this_lockout.dustmask == True %}
+              <li>Dust Mask</li>
+            {% endif %}
+            {% if this_lockout.leathergloves == True %}
+              <li>Leather Gloves</li>
+            {% endif %}
+            {% if this_lockout.saranax == True %}
+              <li>Saranax Suit</li>
+            {% endif %}
+            {% if this_lockout.ppe != None %}
+              <li>{{ this_lockout.ppe }}</li>
+              {% endif %}
+          </ul>
         </div>
-        <br>
+      </div>
 
-        <div class="col-xs-12 form-group" style="padding: 40px, 0px, 40px, 0px;">
-          {{ wtf.form_field(lockout_form.lockout_description) }}
-        </div>
-        <h4 style="padding: 20px;"> PPE Required: </h4>
-        <div class="col-md-6 form-group">
-          {{ wtf.form_field(lockout_form.goggles) }}
-          {{ wtf.form_field(lockout_form.faceshield) }}
-          {{ wtf.form_field(lockout_form.fullface) }}
-          {{ wtf.form_field(lockout_form.dustmask) }}
-          {{ wtf.form_field(lockout_form.leathergloves) }}
-          {{ wtf.form_field(lockout_form.saranax) }}
-        </div>
-        <div class="col-md-6 form-group">
-          {{ wtf.form_field(lockout_form.nitrilegloves) }}
-          {{ wtf.form_field(lockout_form.chemicalgloves) }}
-          {{ wtf.form_field(lockout_form.chemicalsuit) }}
-          {{ wtf.form_field(lockout_form.tyrex) }}
-          {{ wtf.form_field(lockout_form.rubberboots) }}
-          {{ wtf.form_field(lockout_form.sar) }}
-        </div>
-        <div class="form-inline form-group col-sm-6">
-            <p>{{ wtf.form_field(lockout_form.ppe) }}</p>
-          <br>
-        </div>
-  <!--  Table ------------------>
-        <table class="table" id="lines_table">
+  <!-- Table -->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-body">
+        <table class="table">
           <thead>
-            <tr>
+            <tr style="background-color: #A2FBA2;">
               <th>Valve # / MCC #</th>
               <th>Item Description / Location</th>
               <th>Lock Position</th>
+              <th>Lock #</th>
+              <th>Try Out</th>
               <th>Removal Position</th>
+              <th>Lock/Tag Removed</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
-                <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
-                <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
-                <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
-              </tr>
-              <hr>
-              <tr>
-                <th >
-                  <button class="btn btn-primary btn-block" type="submit">Add Lockout Line</button>
-                </th>
+          <tbody style="padding-bottom: 15px;">
+        {% for each in lockout_lines %}
+            <tr style="border-bottom: inset;">
+              <th scope="row">{{ each.valve_number}}</th>
+                <td>{{ each.line_description }}</td>
+                <td>{{ each.lock_position }}</td>
                 <td></td>
                 <td></td>
+                <td>{{ each.removal_position }}</td>
                 <td></td>
-              </tr>
-            </tbody>
-          </table>
-        <hr>
+            </tr>
+        {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-body">
+        <form method="POST" action="/lockout/{{this_lockout.id}}">
+          <dl>
+            {{ wtf.quick_form(chain_of_custody_form) }}
+            <input class="btn btn-success" type="submit" value="Submit">
+          </dl>
+        </form>
+<!-- <form class="form-inline" method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}/close">
+        <div class="form-group mx-sm-12">
+          <label>Cleared By:</label>
+          <input type="text" class="form-control" name="cleared_by" placeholder="username">
+          <input type="file" class="form-control mb-2 mr-sm-2 mb-sm-0" name="file" class="file" id="attach" placeholder="Attach File">
+          <button type="submit" class="btn btn-danger">Submit</button>
+        </div>
+      </form> -->
+    </div>
+    </div>
+    <div style="padding-top: 40px;">
+      <a class="btn btn-warning btn-lg btn-block" href="/lockout/{{this_lockout.id}}/downloadpdf" >Generate PDF</a>
+    </div>
   </div>
+</div>
+
+
 
 
 {% endblock %}

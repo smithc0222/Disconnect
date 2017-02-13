@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory, make_response
 import pdfkit
-from app.lockout.forms import LockoutForm, LockoutLineForm, AcceptedForm
+from app.lockout.forms import LockoutForm, LockoutLineForm, ChainOfCustodyForm
 from app.lockout.models import Lockout, Lockout_Line, Open_Table, Implemented_Table, Accepted_Table, Released_Table, Cleared_Table
 from app.auth.models import User
 from datetime import datetime
@@ -25,7 +25,6 @@ def index():
     accepted_lockouts=db.session.query(Accepted_Table).all()
     released_lockouts=db.session.query(Released_Table).all()
     cleared_lockouts=db.session.query(Cleared_Table).all()
-    print(open_lockouts)
     return render_template('index.html', open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
                             cleared_lockouts=cleared_lockouts, user=user, today=today)
@@ -96,66 +95,26 @@ def save_lockout():
     else:
         return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines, open_table=open_table)
 
-@mod.route('/lockout/<int:this_lockout_id>/implement', methods=['POST', 'GET'])
+@mod.route('/lockout/<int:this_lockout_id>', methods=['POST', 'GET'])
 @login_required
-def implement_lockout(this_lockout_id):
+def lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    accepted_form=AcceptedForm(request.form)
-    if accepted_form.validate_on_submit():
-        this_lockout.implemented_by=current_user
-        this_lockout.implemented_status=True
-        db.session.commit()
-        return redirect(url_for('lockout.index'))
-    else:
-        return render_template('implemented_by.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
-
-@mod.route('/lockout/<int:this_lockout_id>/accept', methods=['POST', 'GET'])
-@login_required
-def accept_lockout(this_lockout_id):
-    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
-    lockout_lines=this_lockout.lockout
-    accepted_form=AcceptedForm(request.form)
-    if accepted_form.validate_on_submit():
-        this_lockout.accepted_by=current_user
-        this_lockout.accepted_status=True
-        db.session.commit()
-        return redirect(url_for('lockout.index'))
-    else:
-        return render_template('accepted_by.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
-
-@mod.route('/lockout/<int:this_lockout_id>/released', methods=['POST','GET'])
-@login_required
-def released_lockout(this_lockout_id):
-    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
-    lockout_lines=this_lockout.lockout
-    accepted_form=AcceptedForm(request.form)
-    if accepted_form.validate_on_submit():
-        this_lockout.released_by.current_user
-        this_lockout.work_status=True
-        this_lockout.released_status=True
-        return redirect(url_for('lockout.index'))
-    return render_template('released_by.html',this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
-
-@mod.route('/lockout/<int:this_lockout_id>/close', methods=['POST', 'GET'])
-@login_required
-def close_lockout(this_lockout_id):
-    this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
-    lockout_lines=this_lockout.lockout
-    accepted_form=AcceptedForm(request.form)
-    if accepted_form.validate_on_submit():
-        this_lockout.closed_by=current_user
+    chain_of_custody_form=ChainOfCustodyForm(request.form)
+    open_table=db.session.query(Open_Table).filter_by(lockout=this_lockout).first()
+    if chain_of_custody_form.validate_on_submit():
+        implemented_user=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
+        this_lockout.implemented_by=implemented_user
     #    files = request.files['file']
     #    filename=files.filename
     #    files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     #    this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
     #    this_file.filename=files.filename
     #    this_file.data=files.read()
-        this_lockout.close_status=True
         db.session.commit()
         return redirect(url_for('lockout.index'))
     else:
-        return render_template('upload.html', this_lockout=this_lockout, lockout_lines=lockout_lines, accepted_form=accepted_form)
+        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table)
 
 @mod.route('/upload', methods = ['GET','POST'])
 @login_required
