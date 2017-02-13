@@ -103,34 +103,31 @@ def lockout(this_lockout_id):
     chain_of_custody_form=ChainOfCustodyForm(request.form)
     open_table=db.session.query(Open_Table).filter_by(lockout=this_lockout).first()
     if chain_of_custody_form.validate_on_submit():
-        implemented_user=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
-        this_lockout.implemented_by=implemented_user
-    #    files = request.files['file']
-    #    filename=files.filename
-    #    files.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    #    this_file=db.session.query(Lockout).filter_by(id=this_lockout.id).first()
-    #    this_file.filename=files.filename
-    #    this_file.data=files.read()
-        db.session.commit()
+
+        implemented_by=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
+        this_lockout.implemented_by=implemented_by
+        print(this_lockout.implemented_by)
+        b.session.commit()
+
+        accepted_by=db.session.query(User).filter_by(username=chain_of_custody_form.accepted_by.data).first()
+        this_lockout.accepted_by=accepted_by
+        print(this_lockout.accepted_by)
+        b.session.commit()
+
+        released_by=db.session.query(User).filter_by(username=chain_of_custody_form.released_by.data).first()
+        this_lockout.released_by=released_by
+        print(this_lockout.released_by)
+        b.session.commit()
+
+        cleared_by=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
+        this_lockout.cleared_by=cleared_by
+        print(this_lockout.cleared_by)
+        b.session.commit()
+
         return redirect(url_for('lockout.index'))
     else:
         return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table)
 
-@mod.route('/upload', methods = ['GET','POST'])
-@login_required
-def upload():
-    return render_template('upload.html')
-
-# For a given file, return whether it's an allowed type or not
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
-
-@mod.route('/static/lockout/<filename>')
-@login_required
-def uploaded_file(filename):
-
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @mod.route('/lockout/<int:this_lockout_id>/pdf')
@@ -138,10 +135,10 @@ def uploaded_file(filename):
 def pdf_template(this_lockout_id):
     path_wkthmltopdf = r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'
     pdf_config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
-
+    today=datetime.today()
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    rendered=render_template('pdf.html', this_lockout=this_lockout, lockout_lines=lockout_lines)
+    rendered=render_template('pdf.html', this_lockout=this_lockout, lockout_lines=lockout_lines,today=today)
     pdf = pdfkit.from_string(rendered, False,  configuration=pdf_config)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'

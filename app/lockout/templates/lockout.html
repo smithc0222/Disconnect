@@ -82,6 +82,9 @@
         <form method="POST" action="/lockout/{{this_lockout.id}}">
           <dl>
             {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
+            {{ wtf.form_field(chain_of_custody_form.accepted_by) }}
+            {{ wtf.form_field(chain_of_custody_form.released_by) }}
+            {{ wtf.form_field(chain_of_custody_form.cleared_by) }}
             <input class="btn btn-success" type="submit" value="Submit">
           </dl>
         </form>
@@ -96,7 +99,7 @@
     </div>
     </div>
     <div style="padding-top: 40px;">
-      <a class="btn btn-warning btn-lg btn-block" href="/lockout/{{this_lockout.id}}/downloadpdf" >Generate PDF</a>
+      <a class="btn btn-warning btn-lg btn-block" href="/lockout/{{this_lockout.id}}/pdf" >Generate PDF</a>
     </div>
   </div>
 </div>
