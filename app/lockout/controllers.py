@@ -20,11 +20,11 @@ from app.auth.controllers import load_user
 def index():
     today=datetime.today()
     user=db.session.query(User).filter_by(username=current_user.username).first()
-    open_lockouts=db.session.query(Open_Table).filter_by(open_status=True).all()
-    implemented_lockouts=db.session.query(Implemented_Table).filter_by(implemented_status=True).all()
-    accepted_lockouts=db.session.query(Accepted_Table).filter_by(accepted_status=True).all()
-    released_lockouts=db.session.query(Released_Table).filter_by(released_status=True).all()
-    cleared_lockouts=db.session.query(Cleared_Table).filter_by(cleared_status=True).all()
+    open_lockouts=db.session.query(Open_Table).all()
+    implemented_lockouts=db.session.query(Implemented_Table).all()
+    accepted_lockouts=db.session.query(Accepted_Table).all()
+    released_lockouts=db.session.query(Released_Table).all()
+    cleared_lockouts=db.session.query(Cleared_Table).all()
     return render_template('index.html', cleared_lockouts=cleared_lockouts,
                             open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
@@ -43,6 +43,7 @@ def create_lockout():
 
     if request.method == 'POST':
         new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
+                            created_by=user,
                             lockout_description=lockout_form.lockout_description.data,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
@@ -59,7 +60,7 @@ def create_lockout():
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
 
-        new_lockout_creator=Open_Table(open_status=1, created_by=user,lockout=new_lockout, date=None)
+        new_lockout_creator=Open_Table(open_status=1,lockout=new_lockout, date=None)
         db.session.add(new_lockout_creator)
 
         new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
@@ -82,6 +83,7 @@ def save_lockout():
     this_lockout=all_lockout[-1]
     lockout_line_form=LockoutLineForm(request.form)
     lockout_lines=this_lockout.lockout
+    open_table=db.session.query(Open_Table).filter_by(lockout=this_lockout).first()
     if request.method == 'POST':
         new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
                         line_description=lockout_line_form.line_description.data,
@@ -92,7 +94,7 @@ def save_lockout():
         db.session.commit()
         return redirect(url_for('lockout.save_lockout'))
     else:
-        return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines)
+        return render_template('save_lockout.html', this_lockout=this_lockout, lockout_line_form=lockout_line_form, lockout_lines=lockout_lines, open_table=open_table)
 
 @mod.route('/lockout/<int:this_lockout_id>/implement', methods=['POST', 'GET'])
 @login_required

@@ -33,14 +33,14 @@
           </thead>
           <tbody>
             {% for each in open_lockouts %}
-            {% if implemented_status == False %}
+          <!--  {% if implemented_status == 0 %} -->
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
-              <td>{{ each.lockout_description }}</td>
+              <td>{{ each.lockout.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.lockout_author.last_name }}</td>
+              <td>{{ each.lockout.created_by }}</td>
             </tr>
-            {% endif %}
+         <!--    {% endif %} -->
             {% endfor %}
           </tbody>
         </table>
@@ -65,10 +65,10 @@
           </thead>
           <tbody>
             {% for each in implemented_lockouts %}
-            {% if accepted_status == False %}
+            {% if accepted_status == 0 %}
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
-              <td>{{ each.lockout_description }}</td>
+              <td>{{ each.lockout.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
               <td>{{ each.implemented_by.last_name }}</td>
             </tr>
@@ -97,7 +97,7 @@
           </thead>
           <tbody>
             {% for each in accepted_lockouts %}
-            {% if released_status == False %}
+            {% if released_status == 0 %}
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
               <td>{{ each.lockout_description }}</td>
@@ -129,7 +129,7 @@
           </thead>
           <tbody>
             {% for each in released_lockouts %}
-            {% if cleared_status == False %}
+            {% if cleared_status == 0 %}
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
               <td>{{ each.lockout_description }}</td>
