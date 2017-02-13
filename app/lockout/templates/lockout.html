@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="col-md-12" style="text-align: center; padding-bottom: 60px;">
+      <h1>  Lockout|Tagout </h1>
+      <hr>
+    </div>
+    <div class="form-group">
+      <form  method="POST" action="/create_lockout">
+          {{ wtf.csrf_token }}
+        <div class="row" style="padding-top: 20px; font-size: 18px;">
+            <div class="form-inline col-sm-5">
+                <p style="margin-bottom: 6px;"> {{ wtf.form_field(lockout_form.lockout_number) }} </p>
+            </div>
+            <div class="col-sm-4">
+                <p>  Developer: {{user.first_name}} </p>
+            </div>
+            <div class="col-sm-3">
+                <p>  Date: {{today.strftime("%m/%d/%y")}} </p>
+            </div>
+        </div>
+        <br>
+
+        <div class="col-xs-12 form-group" style="padding: 40px, 0px, 40px, 0px;">
+          {{ wtf.form_field(lockout_form.lockout_description) }}
+        </div>
+        <h4 style="padding: 20px;"> PPE Required: </h4>
+        <div class="col-md-6 form-group">
+          {{ wtf.form_field(lockout_form.goggles) }}
+          {{ wtf.form_field(lockout_form.faceshield) }}
+          {{ wtf.form_field(lockout_form.fullface) }}
+          {{ wtf.form_field(lockout_form.dustmask) }}
+          {{ wtf.form_field(lockout_form.leathergloves) }}
+          {{ wtf.form_field(lockout_form.saranax) }}
+        </div>
+        <div class="col-md-6 form-group">
+          {{ wtf.form_field(lockout_form.nitrilegloves) }}
+          {{ wtf.form_field(lockout_form.chemicalgloves) }}
+          {{ wtf.form_field(lockout_form.chemicalsuit) }}
+          {{ wtf.form_field(lockout_form.tyrex) }}
+          {{ wtf.form_field(lockout_form.rubberboots) }}
+          {{ wtf.form_field(lockout_form.sar) }}
+        </div>
+        <div class="form-inline form-group col-sm-6">
+            <p>{{ wtf.form_field(lockout_form.ppe) }}</p>
+          <br>
+        </div>
+  <!--  Table ------------------>
+        <table class="table" id="lines_table">
+          <thead>
+            <tr>
+              <th>Valve # / MCC #</th>
+              <th>Item Description / Location</th>
+              <th>Lock Position</th>
+              <th>Removal Position</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ wtf.form_field(lockout_line_form.valve_number) }}</th>
+                <td>{{ wtf.form_field(lockout_line_form.line_description) }}</td>
+                <td>{{ wtf.form_field(lockout_line_form.lock_position) }}</td>
+                <td>{{ wtf.form_field(lockout_line_form.removal_position) }}</td>
+              </tr>
+              <hr>
+              <tr>
+                <th >
+                  <button class="btn btn-primary btn-block" type="submit">Add Lockout Line</button>
+                </th>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        <hr>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}

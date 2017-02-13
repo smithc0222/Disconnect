@@ -12,7 +12,7 @@
           <h4> LOTO Number: {{ this_lockout.lockout_number }} </h4>
         </div>
         <div class="col-md-4">
-          <h4>Developer: {{ this_lockout.lockout_author.first_name }} {{ this_lockout.lockout_author.last_name }}</h4>
+          <h4>Developer: {{ this_lockout.created_by.first_name }} {{ this_lockout.created_by.last_name }}</h4>
         </div>
         <div class="col-md-4">
           <h4>Date: {{ this_lockout.date.strftime("%m/%d/%y") }}</h4>

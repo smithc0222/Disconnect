@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory, make_response
 import pdfkit
 from app.lockout.forms import LockoutForm, LockoutLineForm, AcceptedForm
-from app.lockout.models import Lockout, Lockout_Line
+from app.lockout.models import Lockout, Lockout_Line, Open_Table, Implemented_Table, Accepted_Table, Released_Table, Cleared_Table
 from app.auth.models import User
 from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -20,12 +20,12 @@ from app.auth.controllers import load_user
 def index():
     today=datetime.today()
     user=db.session.query(User).filter_by(username=current_user.username).first()
-    open_lockouts=db.session.query(Lockout).filter_by(open_status=True, implemented_status=False).all()
-    implemented_lockouts=db.session.query(Lockout).filter_by(implemented_status=True, accepted_status=False).all()
-    accepted_lockouts=db.session.query(Lockout).filter_by(accepted_status=True, released_status=False).all()
-    released_lockouts=db.session.query(Lockout).filter_by(released_status=True, closed_status=False).all()
-    closed_lockouts=db.session.query(Lockout).filter_by(closed_status=True).all()
-    return render_template('index.html', closed_lockouts=closed_lockouts,
+    open_lockouts=db.session.query(Open_Table).filter_by(open_status=True).all()
+    implemented_lockouts=db.session.query(Implemented_Table).filter_by(implemented_status=True).all()
+    accepted_lockouts=db.session.query(Accepted_Table).filter_by(accepted_status=True).all()
+    released_lockouts=db.session.query(Released_Table).filter_by(released_status=True).all()
+    cleared_lockouts=db.session.query(Cleared_Table).filter_by(cleared_status=True).all()
+    return render_template('index.html', cleared_lockouts=cleared_lockouts,
                             open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
                             user=user, today=today)
@@ -44,7 +44,6 @@ def create_lockout():
     if request.method == 'POST':
         new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
                             lockout_description=lockout_form.lockout_description.data,
-                            lockout_author=user,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
                             fullface=lockout_form.fullface.data,
@@ -59,6 +58,9 @@ def create_lockout():
                             sar=lockout_form.sar.data,
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
+
+        new_lockout_creator=Open_Table(open_status=1, created_by=user,lockout=new_lockout, date=None)
+        db.session.add(new_lockout_creator)
 
         new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
                         line_description=lockout_line_form.line_description.data,
