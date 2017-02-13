@@ -25,10 +25,10 @@ def index():
     accepted_lockouts=db.session.query(Accepted_Table).all()
     released_lockouts=db.session.query(Released_Table).all()
     cleared_lockouts=db.session.query(Cleared_Table).all()
-    return render_template('index.html', cleared_lockouts=cleared_lockouts,
-                            open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
+    print(open_lockouts)
+    return render_template('index.html', open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
-                            user=user, today=today)
+                            cleared_lockouts=cleared_lockouts, user=user, today=today)
 
 @mod.route('/create_lockout', methods=['POST', 'GET'])
 @login_required

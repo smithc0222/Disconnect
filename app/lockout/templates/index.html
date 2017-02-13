@@ -2,13 +2,11 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 <div class="row">
-  <div class="col-md-12">
     {% for message in get_flashed_messages() %}
       {% if message == 'Logged in as ' %}
         <h3 class=flashes>{{ message }} {{ user.first_name }} {{ user.last_name }} </h3>
       {% endif %}
     {% endfor %}
-  </div>
 </div>
 <div class="jumbotron">
   <div class="text-center" style="padding-bottom: 40px;">
@@ -33,14 +31,12 @@
           </thead>
           <tbody>
             {% for each in open_lockouts %}
-          <!--  {% if implemented_status == 0 %} -->
             <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
               <td>{{ each.lockout.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
               <td>{{ each.lockout.created_by }}</td>
             </tr>
-         <!--    {% endif %} -->
             {% endfor %}
           </tbody>
         </table>
@@ -65,14 +61,14 @@
           </thead>
           <tbody>
             {% for each in implemented_lockouts %}
-            {% if accepted_status == 0 %}
+
             <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
               <td>{{ each.lockout.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.implemented_by.last_name }}</td>
+              <td>{{ each.lockout.implemented_by }}</td>
             </tr>
-            {% endif %}
+
             {% endfor %}
           </tbody>
         </table>
@@ -97,14 +93,14 @@
           </thead>
           <tbody>
             {% for each in accepted_lockouts %}
-            {% if released_status == 0 %}
+
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
               <td>{{ each.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
               <td>{{ each.accepted_by.last_name }}</td>
             </tr>
-            {% endif %}
+
             {% endfor %}
           </tbody>
         </table>
@@ -129,14 +125,14 @@
           </thead>
           <tbody>
             {% for each in released_lockouts %}
-            {% if cleared_status == 0 %}
+
             <tr >
               <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
               <td>{{ each.lockout_description }}</td>
               <td>{{ each.date.strftime("%m/%d/%y") }}</td>
               <td>{{ each.released_by.last_name }}</td>
             </tr>
-            {% endif %}
+
             {% endfor %}
           </tbody>
         </table>
