@@ -7,12 +7,13 @@ class Lockout(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     lockout_number=db.Column(db.String(10), nullable=False)
     lockout_description=db.Column(db.String(200), nullable=False)
-    created_by = db.relationship('User', backref=db.backref('created_by', lazy='dynamic'))
-    implemented_by= db.relationship('User', backref=db.backref('implemented_by', lazy='dynamic'))
-    accepted_by = db.relationship('User', backref=db.backref('accepted_by', lazy='dynamic'))
-    released_by = db.relationship('User', backref=db.backref('released_by', lazy='dynamic'))
-    cleared_by = db.relationship('User', backref=db.backref('cleared_by', lazy='dynamic'))
-    user_id=db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+
+
+
+
+
+
+
     lockout_file=db.Column(db.String(20), nullable=True)
     pid_file=db.Column(db.String(20), nullable=True)
     goggles=db.Column(db.Boolean(), default=False)
@@ -29,11 +30,10 @@ class Lockout(db.Model):
     sar=db.Column(db.Boolean(),default=False)
     ppe=db.Column(db.String(50))
 
-    def __init__(self, lockout_number,created_by, lockout_description, goggles, faceshield,
+    def __init__(self, lockout_number, lockout_description, goggles, faceshield,
         fullface, dustmask, leathergloves, saranax, nitrilegloves, chemicalsuit, chemicalgloves,
         tyrex, rubberboots, sar, ppe):
         self.lockout_number=lockout_number
-        self.created_by=created_by
         self.lockout_description=lockout_description
         self.goggles=goggles
         self.faceshield=faceshield
@@ -50,19 +50,22 @@ class Lockout(db.Model):
         self.ppe=ppe
 
     def __repr__(self):
-        return 'Lockout: {} | Created by: {}'.format(self.lockout_number, self.created_by)
+        return 'Lockout: {} | Desc: {}'.format(self.lockout_number, self.lockout_description)
 
 class Open_Table(db.Model):
 
     __tablename__="open_table"
     id=db.Column(db.Integer, primary_key=True)
     open_status=db.Column(db.Boolean(), default=True)
+    created_by_id=db.Column('created_by_id', db.Integer, db.ForeignKey('user.id'))
+    created_by = db.relationship('User', backref=db.backref('created_by', lazy='dynamic'))
     lockout=db.relationship('Lockout', backref=db.backref('open_lockout', lazy='dynamic'))
     lockout_id=db.Column('lockout_id', db.Integer, db.ForeignKey('lockout.id'))
     date=db.Column(db.DateTime)
 
-    def __init__(self, open_status, lockout, date=None):
+    def __init__(self, open_status, created_by, lockout, date=None):
         self.open_status=open_status
+        self.created_by=created_by
         self.lockout=lockout
         if date is None:
             date = datetime.utcnow()
@@ -76,12 +79,15 @@ class Implemented_Table(db.Model):
     __tablename__="implemented_table"
     id=db.Column(db.Integer, primary_key=True)
     implemented_status=db.Column(db.Boolean(), default=True)
+    implemented_by_id=db.Column('implemented_by_id', db.Integer, db.ForeignKey('user.id'))
+    implemented_by= db.relationship('User', backref=db.backref('implemented_by', lazy='dynamic'))
     lockout=db.relationship('Lockout', backref=db.backref('implemented_lockout', lazy='dynamic'))
     lockout_id=db.Column('lockout_id', db.Integer, db.ForeignKey('lockout.id'))
     date=db.Column(db.DateTime)
 
-    def __init__(self, implemented_status, lockout, date=None):
+    def __init__(self, implemented_status, implemented_by, lockout, date=None):
         self.implemented_status=implemented_status
+        self.implemented_by=implemented_by
         self.lockout=lockout
         if date is None:
             date = datetime.utcnow()
@@ -95,12 +101,15 @@ class Accepted_Table(db.Model):
     __tablename__="accepted_table"
     id=db.Column(db.Integer, primary_key=True)
     accepted_status=db.Column(db.Boolean(), default=True)
+    accepted_by_id=db.Column('accepted_by_id', db.Integer, db.ForeignKey('user.id'))
+    accepted_by = db.relationship('User', backref=db.backref('accepted_by', lazy='dynamic'))
     lockout=db.relationship('Lockout', backref=db.backref('accepted_lockout', lazy='dynamic'))
     lockout_id=db.Column('lockout_id', db.Integer, db.ForeignKey('lockout.id'))
     date=db.Column(db.DateTime)
 
-    def __init__(self, accepted_status, lockout, date=None):
+    def __init__(self, accepted_status, accepted_by, lockout, date=None):
         self.accepted_status=accepted_status
+        self.accepted_by=accepted_by
         self.lockout=lockout
         if date is None:
             date = datetime.utcnow()
@@ -114,6 +123,8 @@ class Released_Table(db.Model):
     __tablename__="released_table"
     id=db.Column(db.Integer, primary_key=True)
     released_status=db.Column(db.Boolean(), default=True)
+    released_by_id=db.Column('released_by_id', db.Integer, db.ForeignKey('user.id'))
+    released_by = db.relationship('User', backref=db.backref('released_by', lazy='dynamic'))
     lockout=db.relationship('Lockout', backref=db.backref('released_lockout', lazy='dynamic'))
     lockout_id=db.Column('lockout_id', db.Integer, db.ForeignKey('lockout.id'))
     date=db.Column(db.DateTime)
@@ -134,11 +145,13 @@ class Cleared_Table(db.Model):
     __tablename__="cleared_table"
     id=db.Column(db.Integer, primary_key=True)
     cleared_status=db.Column(db.Boolean(), default=True)
+    cleared_by_id=db.Column('cleared_by_id', db.Integer, db.ForeignKey('user.id'))
+    cleared_by = db.relationship('User', backref=db.backref('cleared_by', lazy='dynamic'))
     lockout=db.relationship('Lockout', backref=db.backref('cleared_lockout', lazy='dynamic'))
     lockout_id=db.Column('lockout_id', db.Integer, db.ForeignKey('lockout.id'))
     date=db.Column(db.DateTime)
 
-    def __init__(self, cleared_status, lockout, date=None):
+    def __init__(self, cleared_status, cleared_by, lockout, date=None):
         self.cleared_status=cleared_status
         self.cleared_by=cleared_by
         self.lockout=lockout

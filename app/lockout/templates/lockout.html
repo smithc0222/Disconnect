@@ -9,7 +9,7 @@
     </div>
     <div class="row" style="padding: 20px; font-size: 18px;">
         <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.lockout_number }}</div>
-        <div class="col-lg-4">Developed By: {{ this_lockout.created_by.first_name }} {{ this_lockout.created_by.last_name }}</div>
+        <div class="col-lg-4">Developed By: {{ this_lockout.open_lockout[0].created_by.first_name }} {{ this_lockout.open_lockout[0].created_by.last_name }}</div>
         <div class="col-lg-4">Date: {{ open_table.date.strftime("%m/%d/%y") }}</div>
     </div>
     <div class="panel-group">
@@ -81,10 +81,29 @@
       <div class="panel-body">
         <form method="POST" action="/lockout/{{this_lockout.id}}">
           <dl>
-            {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
-            {{ wtf.form_field(chain_of_custody_form.accepted_by) }}
-            {{ wtf.form_field(chain_of_custody_form.released_by) }}
-            {{ wtf.form_field(chain_of_custody_form.cleared_by) }}
+            {% if implemented == None: %}
+              {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
+            {% else %}
+              <h4>  Implemented By: {{ implemented.implemented_by }}</h4>
+            {% endif %}
+
+            {% if accepted == None: %}
+              {{ wtf.form_field(chain_of_custody_form.accepted_by) }}
+            {% else %}
+              <h4>  Accepted By: {{ accepted.accepted_by }}</h4>
+            {% endif %}
+
+            {% if released == None: %}
+              {{ wtf.form_field(chain_of_custody_form.released_by) }}
+            {% else %}
+              <h4>  Released By: {{ released.released_by }}</h4>
+            {% endif %}
+
+            {% if cleared == None: %}
+              {{ wtf.form_field(chain_of_custody_form.cleared_by) }}
+            {% else %}
+              <h4>  Cleared By: {{ cleared.cleared_by }}</h4>
+            {% endif %}
             <input class="btn btn-success" type="submit" value="Submit">
           </dl>
         </form>

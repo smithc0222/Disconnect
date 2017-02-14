@@ -9,7 +9,7 @@
     </div>
     <div class="row" style="padding: 20px; font-size: 18px;">
         <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.lockout_number }}</div>
-        <div class="col-lg-4">Developed By: {{ this_lockout.created_by.first_name }} {{ this_lockout.created_by.last_name }}</div>
+        <div class="col-lg-4">Developed By: {{ this_lockout.open_lockout[0].created_by.first_name }} {{ this_lockout.open_lockout[0].created_by.last_name }}</div>
         <div class="col-lg-4">Date: {{ today.strftime("%m/%d/%y") }}</div>
     </div>
     <div class="panel-group">
@@ -79,10 +79,10 @@
     </div>
     <div class="panel" style="margin-bottom: 25px;">
       <div class="panel-body">
-        <p>Implemented by: {{this_lockout.implemented_by.last_name}}</p>
-        <p>Accepted by: {{this_lockout.accepted_by.last_name}}</p>
-        <p>Released by: {{this_lockout.released_by.last_name}}</p>
-        <p>Cleared by: {{this_lockout.cleared_by.last_name}}</p>
+        <p>Implemented by: {{this_lockout.implemented_lockout[0].implemented_by}}</p>
+        <p>Accepted by: {{this_lockout.accepted_lockout[0].accepted_by}}</p>
+        <p>Released by: {{this_lockout.released_lockout[0].released_by}}</p>
+        <p>Cleared by: {{this_lockout.cleared_lockout[0].cleared_by}}</p>
       </div>
     </div>
   </div>

@@ -25,7 +25,11 @@ class LockoutLineForm(Form):
     removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
 
 class ChainOfCustodyForm(Form):
-        implemented_by=StringField('Implemented by:')
-        accepted_by=StringField('Accepted by:')
-        released_by=StringField('Released by:')
-        cleared_by=StringField('Cleared by:')
+    implemented_by=StringField('Implemented by:')
+    accepted_by=StringField('Accepted by:')
+    released_by=StringField('Released by:')
+    cleared_by=StringField('Cleared by:')
+
+def validate_lockout_number(self, field):
+    if Lockout.query.filter_by(lockout_number=field.data).first():
+        raise ValidationError('Lockout number already in use.')

@@ -15,7 +15,7 @@
                 <p style="margin-bottom: 6px;"> {{ wtf.form_field(lockout_form.lockout_number) }} </p>
             </div>
             <div class="col-sm-4">
-                <p>  Developer: {{user.first_name}} </p>
+                <p>  Developer: {{user.first_name}} {{user.last_name}}</p>
             </div>
             <div class="col-sm-3">
                 <p>  Date: {{today.strftime("%m/%d/%y")}} </p>

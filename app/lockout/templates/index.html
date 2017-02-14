@@ -30,119 +30,27 @@
             </tr>
           </thead>
           <tbody>
-            {% for each in open_lockouts %}
-            <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-              <td>{{ each.lockout.lockout_description }}</td>
-              <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.lockout.created_by }}</td>
+            <tr>
+              <th scope="row" class="" ><a href="lockout/1">Lockout number</a></th>
+              <td>Lockout Description</td>
+              <td>Date</td>
+              <td>Name</td>
             </tr>
-            {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
   </div>
 <!-- Implement TABLE --------------------------------------------->
-  <div class="panel" style="margin-bottom: 25px;">
-    <div class="panel-heading">
-      Implemented
-    </div>
-    <div class="panel-body">
-      <div style="overflow-x:auto;">
-        <table class="table table-sm table-responsive table-hover">
-          <thead>
-            <tr style="background-color: #FF9A12;">
-              <th>Lockout No:</th>
-              <th>Lockout Description</th>
-              <th>Date</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for each in implemented_lockouts %}
-            <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-              <td>{{ each.lockout.lockout_description }}</td>
-              <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.lockout.created_by }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-heading">
+        Implemented
       </div>
-    </div>
-  </div>
-  <!-- Accepted TABLE --------------------------------------------->
-  <div class="panel" style="margin-bottom: 25px;">
-    <div class="panel-heading">
-      Accepted
-    </div>
-    <div class="panel-body">
-      <div style="overflow-x:auto;">
-        <table class="table table-sm table-responsive table-hover">
-          <thead>
-            <tr style="background-color: #FFFF4D;">
-              <th>Lockout No:</th>
-              <th>Lockout Description</th>
-              <th>Date</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for each in accepted_lockouts %}
-            <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-              <td>{{ each.lockout.lockout_description }}</td>
-              <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.lockout.created_by }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <!-- Released TABLE --------------------------------------------->
-  <div class="panel" style="margin-bottom: 25px;">
-    <div class="panel-heading">
-      Released
-    </div>
-    <div class="panel-body">
-      <div style="overflow-x:auto;">
-        <table class="table table-sm table-responsive table-hover">
-          <thead>
-            <tr style="background-color: #14C0C9;">
-              <th>Lockout No:</th>
-              <th>Lockout Description</th>
-              <th>Date</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for each in released_lockouts %}
-            <tr >
-              <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-              <td>{{ each.lockout.lockout_description }}</td>
-              <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-              <td>{{ each.lockout.created_by }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-<!-- CLOSE TABLE _____________________-->
-  <div class="panel" style="margin-bottom: 25px;">
-    <div class="panel-heading">
-      Closed
-    </div>
       <div class="panel-body">
         <div style="overflow-x:auto;">
           <table class="table table-sm table-responsive table-hover">
             <thead>
-              <tr style="background-color: #FF9999;">
+              <tr style="background-color: #FF9A12;">
                 <th>Lockout No:</th>
                 <th>Lockout Description</th>
                 <th>Date</th>
@@ -150,19 +58,125 @@
               </tr>
             </thead>
             <tbody>
-              {% for each in cleared_lockouts %}
-              <tr >
-                <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-                <td>{{ each.lockout.lockout_description }}</td>
-                <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                <td>{{ each.lockout.created_by }}</td>
-              </tr>
+              {% for each in lockouts %}
+                {% if each.open_lockout[0].open_status == 1  %}
+                  {% for each in open_lockouts %}
+                    <tr >
+                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
+                      <td>{{ each.lockout.lockout_description }}</td>
+                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                      <td>Name</td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
               {% endfor %}
             </tbody>
           </table>
         </div>
       </div>
     </div>
+    <!-- Accepted TABLE --------------------------------------------->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-heading">
+        Accepted
+      </div>
+      <div class="panel-body">
+        <div style="overflow-x:auto;">
+          <table class="table table-sm table-responsive table-hover">
+            <thead>
+              <tr style="background-color: #FFFF4D;">
+                <th>Lockout No:</th>
+                <th>Lockout Description</th>
+                <th>Date</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for each in lockouts %}
+                {% if each.open_lockout[0].open_status == 1  %}
+                  {% for each in open_lockouts %}
+                    <tr >
+                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
+                      <td>{{ each.lockout.lockout_description }}</td>
+                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                      <td>Name</td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Released TABLE --------------------------------------------->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-heading">
+        Released
+      </div>
+      <div class="panel-body">
+        <div style="overflow-x:auto;">
+          <table class="table table-sm table-responsive table-hover">
+            <thead>
+              <tr style="background-color: #14C0C9;">
+                <th>Lockout No:</th>
+                <th>Lockout Description</th>
+                <th>Date</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for each in lockouts %}
+                {% if each.open_lockout[0].open_status == 1  %}
+                  {% for each in open_lockouts %}
+                    <tr >
+                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
+                      <td>{{ each.lockout.lockout_description }}</td>
+                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                      <td>Name</td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <!-- CLOSE TABLE _____________________-->
+    <div class="panel" style="margin-bottom: 25px;">
+      <div class="panel-heading">
+        Closed
+      </div>
+        <div class="panel-body">
+          <div style="overflow-x:auto;">
+            <table class="table table-sm table-responsive table-hover">
+              <thead>
+                <tr style="background-color: #FF9999;">
+                  <th>Lockout No:</th>
+                  <th>Lockout Description</th>
+                  <th>Date</th>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for each in lockouts %}
+                  {% if each.open_lockout[0].open_status == 1  %}
+                    {% for each in open_lockouts %}
+                      <tr >
+                        <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
+                        <td>{{ each.lockout.lockout_description }}</td>
+                        <td>{{ each.date.strftime("%m/%d/%y") }}</td>
+                        <td>Name</td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
   </div>
 </div>
 

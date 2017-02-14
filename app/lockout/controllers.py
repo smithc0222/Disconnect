@@ -25,9 +25,10 @@ def index():
     accepted_lockouts=db.session.query(Accepted_Table).all()
     released_lockouts=db.session.query(Released_Table).all()
     cleared_lockouts=db.session.query(Cleared_Table).all()
+    lockouts=db.session.query(Lockout).all()
     return render_template('index.html', open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
-                            cleared_lockouts=cleared_lockouts, user=user, today=today)
+                            cleared_lockouts=cleared_lockouts, user=user, lockout=lockout, today=today)
 
 @mod.route('/create_lockout', methods=['POST', 'GET'])
 @login_required
@@ -42,7 +43,6 @@ def create_lockout():
 
     if request.method == 'POST':
         new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
-                            created_by=user,
                             lockout_description=lockout_form.lockout_description.data,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
@@ -59,7 +59,7 @@ def create_lockout():
                             ppe=lockout_form.ppe.data)
         db.session.add(new_lockout)
 
-        new_lockout_creator=Open_Table(open_status=1,lockout=new_lockout, date=None)
+        new_lockout_creator=Open_Table(open_status=1,created_by=user, lockout=new_lockout, date=None)
         db.session.add(new_lockout_creator)
 
         new_lockout_line=Lockout_Line(valve_number=lockout_line_form.valve_number.data,
@@ -102,31 +102,40 @@ def lockout(this_lockout_id):
     lockout_lines=this_lockout.lockout
     chain_of_custody_form=ChainOfCustodyForm(request.form)
     open_table=db.session.query(Open_Table).filter_by(lockout=this_lockout).first()
-    if chain_of_custody_form.validate_on_submit():
+    implemented=db.session.query(Implemented_Table).filter_by(lockout=this_lockout).first()
+    accepted=db.session.query(Accepted_Table).filter_by(lockout=this_lockout).first()
+    released=db.session.query(Released_Table).filter_by(lockout=this_lockout).first()
+    cleared=db.session.query(Cleared_Table).filter_by(lockout=this_lockout).first()
+    if request.method == 'POST':
+        if chain_of_custody_form.implemented_by.data == None:
+            print('None')
+        else:
+            implement_new=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
+            db.session.add(Implemented_Table(1, implement_new, this_lockout, None))
 
-        implemented_by=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
-        this_lockout.implemented_by=implemented_by
-        print(this_lockout.implemented_by)
-        b.session.commit()
+        if chain_of_custody_form.accepted_by.data == None:
+            print('None')
+        else:
+            accepted_new=db.session.query(User).filter_by(username=chain_of_custody_form.accepted_by.data).first()
+            db.session.add(Accepted_Table(1, accepted_new, this_lockout, None))
 
-        accepted_by=db.session.query(User).filter_by(username=chain_of_custody_form.accepted_by.data).first()
-        this_lockout.accepted_by=accepted_by
-        print(this_lockout.accepted_by)
-        b.session.commit()
+        if chain_of_custody_form.released_by.data == None:
+            print('None')
+        else:
+            released_new=db.session.query(User).filter_by(username=chain_of_custody_form.released_by.data).first()
+            db.session.add(Released_Table(1, released_new, this_lockout, None))
 
-        released_by=db.session.query(User).filter_by(username=chain_of_custody_form.released_by.data).first()
-        this_lockout.released_by=released_by
-        print(this_lockout.released_by)
-        b.session.commit()
+        if chain_of_custody_form.cleared_by.data == None:
+            print('None')
+        else:
+            cleared_new=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
+            db.session.add(Cleared_Table(1, cleared_new, this_lockout, None))
 
-        cleared_by=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
-        this_lockout.cleared_by=cleared_by
-        print(this_lockout.cleared_by)
-        b.session.commit()
+        db.session.commit()
 
         return redirect(url_for('lockout.index'))
     else:
-        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table)
+        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table, implemented=implemented, accepted=accepted, released=released, cleared=cleared)
 
 
 
@@ -138,7 +147,7 @@ def pdf_template(this_lockout_id):
     today=datetime.today()
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    rendered=render_template('pdf.html', this_lockout=this_lockout, lockout_lines=lockout_lines,today=today)
+    rendered=render_template('pdf.html', this_lockout=this_lockout, lockout_lines=lockout_lines, today=today)
     pdf = pdfkit.from_string(rendered, False,  configuration=pdf_config)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
