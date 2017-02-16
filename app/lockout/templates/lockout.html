@@ -10,7 +10,7 @@
     <div class="row" style="padding: 20px; font-size: 18px;">
         <div class="col-lg-3 col-lg-offset-1">LOTO Number: {{ this_lockout.lockout_number }}</div>
         <div class="col-lg-4">Developed By: {{ this_lockout.open_lockout[0].created_by.first_name }} {{ this_lockout.open_lockout[0].created_by.last_name }}</div>
-        <div class="col-lg-4">Date: {{ open_table.date.strftime("%m/%d/%y") }}</div>
+        <div class="col-lg-4">Date: {{ this_lockout.open_lockout[0].date.strftime("%m/%d/%y") }}</div>
     </div>
     <div class="panel-group">
       <div class="panel panel-info" style="margin-bottom: 25px;">
@@ -80,17 +80,17 @@
             </tr>
           </thead>
           <tbody style="padding-bottom: 15px;">
-        {% for each in lockout_lines %}
-            <tr style="border-bottom: inset;">
-              <th scope="row">{{ each.valve_number}}</th>
-                <td>{{ each.line_description }}</td>
-                <td>{{ each.lock_position }}</td>
-                <td></td>
-                <td></td>
-                <td>{{ each.removal_position }}</td>
-                <td></td>
-            </tr>
-        {% endfor %}
+            {% for each in lockout_lines %}
+                <tr style="border-bottom: inset;">
+                  <th scope="row">{{ each.valve_number}}</th>
+                    <td>{{ each.line_description }}</td>
+                    <td>{{ each.lock_position }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ each.removal_position }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -99,28 +99,28 @@
       <div class="panel-body">
         <form method="POST" action="/lockout/{{this_lockout.id}}">
           <dl>
-            {% if implemented == None: %}
+            {% if this_lockout.lockout_status == 1: %}
               {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
             {% else %}
-              <h4>  Implemented By: {{ implemented.implemented_by }}</h4>
+              <h4>  Implemented By: {{ this_lockout.implemented_lockout[0].implemented_by.last_name }}</h4>
             {% endif %}
 
-            {% if accepted == None: %}
+            {% if this_lockout.lockout_status == 2: %}
               {{ wtf.form_field(chain_of_custody_form.accepted_by) }}
             {% else %}
-              <h4>  Accepted By: {{ accepted.accepted_by }}</h4>
+              <h4>  Accepted By: {{ this_lockout.accepted_lockout[0].accepted_by.last_name }}</h4>
             {% endif %}
 
-            {% if released == None: %}
+            {% if this_lockout.lockout_status == 3: %}
               {{ wtf.form_field(chain_of_custody_form.released_by) }}
             {% else %}
-              <h4>  Released By: {{ released.released_by }}</h4>
+              <h4>  Released By: {{ this_lockout.released_lockout[0].released_by.last_name }}</h4>
             {% endif %}
 
-            {% if cleared == None: %}
+            {% if this_lockout.lockout_status == 4: %}
               {{ wtf.form_field(chain_of_custody_form.cleared_by) }}
             {% else %}
-              <h4>  Cleared By: {{ cleared.cleared_by }}</h4>
+              <h4>  Cleared By: {{ this_lockout.cleared_lockout[0].cleared_by.last_name }}</h4>
             {% endif %}
             <input class="btn btn-success" type="submit" value="Submit">
           </dl>

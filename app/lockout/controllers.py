@@ -102,11 +102,6 @@ def lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
     chain_of_custody_form=ChainOfCustodyForm(request.form)
-    open_table=db.session.query(Open_Table).filter_by(lockout=this_lockout).first()
-    implemented=db.session.query(Implemented_Table).filter_by(lockout=this_lockout).first()
-    accepted=db.session.query(Accepted_Table).filter_by(lockout=this_lockout).first()
-    released=db.session.query(Released_Table).filter_by(lockout=this_lockout).first()
-    cleared=db.session.query(Cleared_Table).filter_by(lockout=this_lockout).first()
     if request.method == 'POST':
         if chain_of_custody_form.implemented_by.data == None:
             print('None')
@@ -135,12 +130,12 @@ def lockout(this_lockout_id):
             cleared_new=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
             db.session.add(Cleared_Table(1, cleared_new, this_lockout, None))
             this_lockout.lockout_status=5
-            
+
         db.session.commit()
 
         return redirect(url_for('lockout.index'))
     else:
-        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table, implemented=implemented, accepted=accepted, released=released, cleared=cleared)
+        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form)
 
 @mod.route('/lockout/<int:this_lockout_id>/pdf')
 @login_required
