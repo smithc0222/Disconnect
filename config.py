@@ -8,6 +8,6 @@ class BaseConfig(object):
     ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 class TrinityDevelopmentConfig(BaseConfig):
     DEBUG = True
-    UPLOAD_FOLDER='C:\\users\\csmith\\desktop\\lockoutproto\\lockout\\static\\uploads'
+    UPLOAD_FOLDER='C:\\users\\csmith\\desktop'
 class PythonAnywhereConfig(BaseConfig):
     UPLOAD_FOLDER='/home/chasesmith/mysite/lockout/static/uploads'
