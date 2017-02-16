@@ -28,7 +28,7 @@ def index():
     lockouts=db.session.query(Lockout).all()
     return render_template('index.html', open_lockouts=open_lockouts, accepted_lockouts=accepted_lockouts,
                             implemented_lockouts=implemented_lockouts, released_lockouts=released_lockouts,
-                            cleared_lockouts=cleared_lockouts, user=user, lockout=lockout, today=today)
+                            cleared_lockouts=cleared_lockouts, user=user, lockouts=lockouts, today=today)
 
 @mod.route('/create_lockout', methods=['POST', 'GET'])
 @login_required
@@ -44,6 +44,7 @@ def create_lockout():
     if request.method == 'POST':
         new_lockout=Lockout(lockout_number=lockout_form.lockout_number.data,
                             lockout_description=lockout_form.lockout_description.data,
+                            lockout_status=1,
                             goggles=lockout_form.goggles.data,
                             faceshield=lockout_form.faceshield.data,
                             fullface=lockout_form.fullface.data,
@@ -112,32 +113,34 @@ def lockout(this_lockout_id):
         else:
             implement_new=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
             db.session.add(Implemented_Table(1, implement_new, this_lockout, None))
+            this_lockout.lockout_status=2
 
         if chain_of_custody_form.accepted_by.data == None:
             print('None')
         else:
             accepted_new=db.session.query(User).filter_by(username=chain_of_custody_form.accepted_by.data).first()
             db.session.add(Accepted_Table(1, accepted_new, this_lockout, None))
+            this_lockout.lockout_status=3
 
         if chain_of_custody_form.released_by.data == None:
             print('None')
         else:
             released_new=db.session.query(User).filter_by(username=chain_of_custody_form.released_by.data).first()
             db.session.add(Released_Table(1, released_new, this_lockout, None))
+            this_lockout.lockout_status=4
 
         if chain_of_custody_form.cleared_by.data == None:
             print('None')
         else:
             cleared_new=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
             db.session.add(Cleared_Table(1, cleared_new, this_lockout, None))
-
+            this_lockout.lockout_status=5
+            
         db.session.commit()
 
         return redirect(url_for('lockout.index'))
     else:
         return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form, open_table=open_table, implemented=implemented, accepted=accepted, released=released, cleared=cleared)
-
-
 
 @mod.route('/lockout/<int:this_lockout_id>/pdf')
 @login_required

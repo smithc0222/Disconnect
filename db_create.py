@@ -16,7 +16,7 @@ user3=db.session.query(User).filter_by(id=3).first()
 db.session.commit()
 
 lockout1=Lockout(lockout_number='020217-1', lockout_description='Test lockout',
-                goggles=0, faceshield=0, fullface=0, dustmask=0,
+                lockout_status=1, goggles=0, faceshield=0, fullface=0, dustmask=0,
                 leathergloves=0, saranax=0, nitrilegloves=0,
                 chemicalsuit=0, chemicalgloves=0, tyrex=0,
                 rubberboots=0, sar=0, ppe='' )

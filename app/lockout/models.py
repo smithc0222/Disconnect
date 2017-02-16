@@ -7,13 +7,7 @@ class Lockout(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     lockout_number=db.Column(db.String(10), nullable=False)
     lockout_description=db.Column(db.String(200), nullable=False)
-
-
-
-
-
-
-
+    lockout_status=db.Column(db.Integer)
     lockout_file=db.Column(db.String(20), nullable=True)
     pid_file=db.Column(db.String(20), nullable=True)
     goggles=db.Column(db.Boolean(), default=False)
@@ -30,11 +24,12 @@ class Lockout(db.Model):
     sar=db.Column(db.Boolean(),default=False)
     ppe=db.Column(db.String(50))
 
-    def __init__(self, lockout_number, lockout_description, goggles, faceshield,
+    def __init__(self, lockout_number, lockout_description, lockout_status, goggles, faceshield,
         fullface, dustmask, leathergloves, saranax, nitrilegloves, chemicalsuit, chemicalgloves,
         tyrex, rubberboots, sar, ppe):
         self.lockout_number=lockout_number
         self.lockout_description=lockout_description
+        self.lockout_status=lockout_status
         self.goggles=goggles
         self.faceshield=faceshield
         self.fullface=fullface

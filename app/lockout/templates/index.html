@@ -30,12 +30,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row" class="" ><a href="lockout/1">Lockout number</a></th>
-              <td>Lockout Description</td>
-              <td>Date</td>
-              <td>Name</td>
-            </tr>
+            {% for each in lockouts %}
+              {% if each.lockout_status == 1  %}
+                <tr >
+                  <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                  <td>{{ each.lockout_description }}</td>
+                  <td>{{ each.open_lockout[0].date.strftime("%m/%d/%y") }}</td>
+                  <td>{{ each.open_lockout[0].created_by.last_name }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -59,15 +63,13 @@
             </thead>
             <tbody>
               {% for each in lockouts %}
-                {% if each.open_lockout[0].open_status == 1  %}
-                  {% for each in open_lockouts %}
-                    <tr >
-                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-                      <td>{{ each.lockout.lockout_description }}</td>
-                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                      <td>Name</td>
-                    </tr>
-                  {% endfor %}
+                {% if each.lockout_status == 2 %}
+                  <tr >
+                    <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                    <td>{{ each.lockout_description }}</td>
+                    <td>{{ each.implemented_lockout[0].date.strftime("%m/%d/%y") }}</td>
+                    <td>{{ each.implemented_lockout[0].implemented_by.last_name }}</td>
+                  </tr>
                 {% endif %}
               {% endfor %}
             </tbody>
@@ -93,15 +95,13 @@
             </thead>
             <tbody>
               {% for each in lockouts %}
-                {% if each.open_lockout[0].open_status == 1  %}
-                  {% for each in open_lockouts %}
-                    <tr >
-                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-                      <td>{{ each.lockout.lockout_description }}</td>
-                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                      <td>Name</td>
-                    </tr>
-                  {% endfor %}
+                {% if each.lockout_status == 3  %}
+                  <tr >
+                    <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                    <td>{{ each.lockout_description }}</td>
+                    <td>{{ each.accepted_lockout[0].date.strftime("%m/%d/%y") }}</td>
+                    <td> {{ each.accepted_lockout[0].accepted_by.last_name }}</td>
+                  </tr>
                 {% endif %}
               {% endfor %}
             </tbody>
@@ -127,15 +127,13 @@
             </thead>
             <tbody>
               {% for each in lockouts %}
-                {% if each.open_lockout[0].open_status == 1  %}
-                  {% for each in open_lockouts %}
-                    <tr >
-                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-                      <td>{{ each.lockout.lockout_description }}</td>
-                      <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                      <td>Name</td>
-                    </tr>
-                  {% endfor %}
+                {% if each.lockout_status == 4  %}
+                  <tr >
+                    <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                    <td>{{ each.lockout_description }}</td>
+                    <td>{{ each.released_lockout[0].date.strftime("%m/%d/%y") }}</td>
+                    <td>{{ each.released_lockout[0].released_by.last_name }}</td>
+                  </tr>
                 {% endif %}
               {% endfor %}
             </tbody>
@@ -161,15 +159,13 @@
               </thead>
               <tbody>
                 {% for each in lockouts %}
-                  {% if each.open_lockout[0].open_status == 1  %}
-                    {% for each in open_lockouts %}
-                      <tr >
-                        <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout.lockout_number }}</a></th>
-                        <td>{{ each.lockout.lockout_description }}</td>
-                        <td>{{ each.date.strftime("%m/%d/%y") }}</td>
-                        <td>Name</td>
-                      </tr>
-                    {% endfor %}
+                  {% if each.lockout_status == 5  %}
+                    <tr >
+                      <th scope="row" class="" ><a href="lockout/{{each.id}}">{{ each.lockout_number }}</a></th>
+                      <td>{{ each.lockout_description }}</td>
+                      <td>{{ each.cleared_lockout[0].date.strftime("%m/%d/%y") }}</td>
+                      <td>{{ each.cleared_lockout[0].cleared_by.last_name }}</td>
+                    </tr>
                   {% endif %}
                 {% endfor %}
               </tbody>
