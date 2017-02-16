@@ -39,6 +39,24 @@
             {% if this_lockout.saranax == True %}
               <li>Saranax Suit</li>
             {% endif %}
+            {% if this_lockout.nitrilegloves == True %}
+              <li>Nitrile Gloves</li>
+            {% endif %}
+            {% if this_lockout.chemicalgloves == True %}
+              <li>Chemical Gloves</li>
+            {% endif %}
+            {% if this_lockout.chemicalsuit == True %}
+              <li>Chemical Suit</li>
+            {% endif %}
+            {% if this_lockout.tyrex == True %}
+              <li>Tyrex</li>
+            {% endif %}
+            {% if this_lockout.rubberboots == True %}
+              <li>Rubber Boots</li>
+            {% endif %}
+            {% if this_lockout.sar == True %}
+              <li>SAR</li>
+            {% endif %}
             {% if this_lockout.ppe != None %}
               <li>{{ this_lockout.ppe }}</li>
               {% endif %}
