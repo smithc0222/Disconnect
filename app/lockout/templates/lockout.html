@@ -99,30 +99,30 @@
       <div class="panel-body">
         <form method="POST" action="/lockout/{{this_lockout.id}}">
           <dl>
-            {% if this_lockout.lockout_status == 1: %}
-              {{ wtf.form_field(chain_of_custody_form.implemented_by) }}
+            {% if this_lockout.lockout_status == 1 %}
+              {{ wtf.form_field(implemented_form.implemented_by) }}
             {% else %}
-              <h4>  Implemented By: {{ this_lockout.implemented_lockout[0].implemented_by.last_name }}</h4>
+              <p>Implemented by: {{this_lockout.implemented_lockout[0].implemented_by}}</p>
             {% endif %}
 
-            {% if this_lockout.lockout_status == 2: %}
-              {{ wtf.form_field(chain_of_custody_form.accepted_by) }}
+            {% if this_lockout.lockout_status <= 2 %}
+              {{ wtf.form_field(accepted_form.accepted_by) }}
             {% else %}
-              <h4>  Accepted By: {{ this_lockout.accepted_lockout[0].accepted_by.last_name }}</h4>
+              <p>Accepted by: {{this_lockout.accepted_lockout[0].accepted_by}}</p>
             {% endif %}
 
-            {% if this_lockout.lockout_status == 3: %}
-              {{ wtf.form_field(chain_of_custody_form.released_by) }}
+            {% if this_lockout.lockout_status <= 3 %}
+              {{ wtf.form_field(released_form.released_by) }}
             {% else %}
-              <h4>  Released By: {{ this_lockout.released_lockout[0].released_by.last_name }}</h4>
+                <p>Released by: {{this_lockout.released_lockout[0].released_by}}</p>
             {% endif %}
 
-            {% if this_lockout.lockout_status == 4: %}
-              {{ wtf.form_field(chain_of_custody_form.cleared_by) }}
+            {% if this_lockout.lockout_status <= 4 %}
+              {{ wtf.form_field(cleared_form.cleared_by) }}
+              <input class="btn btn-success" type="submit" value="Submit">
             {% else %}
-              <h4>  Cleared By: {{ this_lockout.cleared_lockout[0].cleared_by.last_name }}</h4>
+                <p>Cleared by: {{this_lockout.cleared_lockout[0].cleared_by}}</p>
             {% endif %}
-            <input class="btn btn-success" type="submit" value="Submit">
           </dl>
         </form>
 <!-- <form class="form-inline" method="POST" enctype=multipart/form-data action="/lockout/{{this_lockout.id}}/close">

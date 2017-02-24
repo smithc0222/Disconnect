@@ -24,10 +24,16 @@ class LockoutLineForm(Form):
     lock_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
     removal_position=SelectField(u'', choices=[('open','Open'),('close','Close')])
 
-class ChainOfCustodyForm(Form):
+class ImplementedForm(Form):
     implemented_by=StringField('Implemented by:')
+    
+class AcceptedForm(Form):
     accepted_by=StringField('Accepted by:')
+
+class ReleasedForm(Form):
     released_by=StringField('Released by:')
+
+class ClearedForm(Form):
     cleared_by=StringField('Cleared by:')
 
 def validate_lockout_number(self, field):

@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, render_template, redirect, url_for, request, session, flash, send_from_directory, make_response
 import pdfkit
-from app.lockout.forms import LockoutForm, LockoutLineForm, ChainOfCustodyForm
+from app.lockout.forms import LockoutForm, LockoutLineForm, ImplementedForm, AcceptedForm, ReleasedForm, ClearedForm
 from app.lockout.models import Lockout, Lockout_Line, Open_Table, Implemented_Table, Accepted_Table, Released_Table, Cleared_Table
 from app.auth.models import User
 from datetime import datetime
@@ -101,33 +101,38 @@ def save_lockout():
 def lockout(this_lockout_id):
     this_lockout=db.session.query(Lockout).filter_by(id=this_lockout_id).first()
     lockout_lines=this_lockout.lockout
-    chain_of_custody_form=ChainOfCustodyForm(request.form)
+    implemented_form=ImplementedForm(request.form)
+    accepted_form=AcceptedForm(request.form)
+    released_form=ReleasedForm(request.form)
+    cleared_form=ClearedForm(request.form)
+
     if request.method == 'POST':
-        if chain_of_custody_form.implemented_by.data == None:
+        if implemented_form.implemented_by.data == '':
             print('None')
         else:
-            implement_new=db.session.query(User).filter_by(username=chain_of_custody_form.implemented_by.data).first()
+            print(implemented_form.implemented_by.data)
+            implement_new=db.session.query(User).filter_by(username=implemented_form.implemented_by.data).first()
             db.session.add(Implemented_Table(1, implement_new, this_lockout, None))
             this_lockout.lockout_status=2
-
-        if chain_of_custody_form.accepted_by.data == None:
+            
+        if accepted_form.accepted_by.data == '':
             print('None')
         else:
-            accepted_new=db.session.query(User).filter_by(username=chain_of_custody_form.accepted_by.data).first()
+            accepted_new=db.session.query(User).filter_by(username=accepted_form.accepted_by.data).first()
             db.session.add(Accepted_Table(1, accepted_new, this_lockout, None))
             this_lockout.lockout_status=3
 
-        if chain_of_custody_form.released_by.data == None:
+        if released_form.released_by.data == '':
             print('None')
         else:
-            released_new=db.session.query(User).filter_by(username=chain_of_custody_form.released_by.data).first()
+            released_new=db.session.query(User).filter_by(username=released_form.released_by.data).first()
             db.session.add(Released_Table(1, released_new, this_lockout, None))
             this_lockout.lockout_status=4
 
-        if chain_of_custody_form.cleared_by.data == None:
+        if cleared_form.cleared_by.data == '':
             print('None')
         else:
-            cleared_new=db.session.query(User).filter_by(username=chain_of_custody_form.cleared_by.data).first()
+            cleared_new=db.session.query(User).filter_by(username=cleared_form.cleared_by.data).first()
             db.session.add(Cleared_Table(1, cleared_new, this_lockout, None))
             this_lockout.lockout_status=5
 
@@ -135,7 +140,9 @@ def lockout(this_lockout_id):
 
         return redirect(url_for('lockout.index'))
     else:
-        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines, chain_of_custody_form=chain_of_custody_form)
+        return render_template('lockout.html', this_lockout=this_lockout, lockout_lines=lockout_lines,
+                                                implemented_form=implemented_form, accepted_form=accepted_form,
+                                                released_form=released_form, cleared_form=cleared_form)
 
 @mod.route('/lockout/<int:this_lockout_id>/pdf')
 @login_required
